@@ -1,0 +1,19 @@
+{
+    "name": "data-Collector-api",
+    "description": "Data Collector API",
+    "version": "0.0.1",
+    "private": true,
+    "dependencies": {
+        "express": "3.x",
+        "mongodb": "1.1.8",
+        "socket.io": "0.9.16"
+    },
+    "engines": {
+        "node": "0.8.4",
+        "npm": "1.1.49"
+    },
+    "scripts": {
+        "start": "node server.js"
+    },
+    "main": "server.js"
+}
