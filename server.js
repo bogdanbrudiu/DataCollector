@@ -7,8 +7,11 @@ var app = express();
 
 
 app.configure(function () {
-	app.set('port', process.env.PORT || 8080);
-	app.set('host', process.env.IP || '192.168.1.10');
+	app.set('port', process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 8080);
+	app.set('host', process.env.OPENSHIFT_NODEJS_IP || process.env.IP || '127.0.0.1');
+
+
+
 	app.use(express.logger('dev'));  /* 'default', 'short', 'tiny', 'dev' */
 	app.use(express.bodyParser()),
 	app.use(express.static(path.join(__dirname, 'public')));
@@ -16,7 +19,7 @@ app.configure(function () {
 });
 
 
-app.param('collectionName', function (req, res, next, collectionName) { req.collection = db.collection(collectionName); return next() });
+app.param('collectionName', function (req, res, next, collectionName) { req.collection = repository.db.collection(collectionName); return next() });
 app.post('/login', repository.login);
 //app.get('/', function(req, res) {  res.send('please select a collection, e.g., /collections/messages')})
 app.get('/collections/:collectionName', repository.getEntries);
@@ -25,6 +28,7 @@ app.put('/collections/:collectionName/:id',repository.updateEntry);
 app.delete('/collections/:collectionName/:id',repository.deleteEntry);
 
 var server= http.createServer(app)
+console.log("Trying to start server at", app.get('host')+ ":" + app.get('port'));
 server.listen(app.get('port'),app.get('host'), function () {
 var addr = server.address();
     console.log("Server listening at", addr.address + ":" + addr.port);
@@ -34,6 +38,7 @@ var io = require('socket.io');
 io = io.listen(server);
 
 io.configure(function () {
+    io.set("transports", ["websocket"]);		
     io.set('authorization', function (handshakeData, callback) {
         if (handshakeData.xdomain) {
             callback('Cross-domain connections are not allowed');

@@ -4,11 +4,23 @@ var Server = mongo.Server,
     Db=  mongo.Db,
     BSON = mongo.BSONPure;
 
-var server = new Server('localhost', 27017, {auto_reconnect: true});
-var db = new Db("dataCollectordb", server, {safe: true});
+
+ var mongodb_host = process.env.OPENSHIFT_MONGODB_DB_HOST || 'localhost';
+ var mongodb_port = parseInt(process.env.OPENSHIFT_MONGODB_DB_PORT) || 27017;
+ var mongodb_db = process.env.OPENSHIFT_APP_NAME || 'dataCollector';
+ var mongodb_user = process.env.OPENSHIFT_MONGODB_DB_USERNAME || 'admin';
+ var mongodb_pass = process.env.OPENSHIFT_MONGODB_DB_PASSWORD || 'xvuefKLK7Nha';
+
+
+var server = new Server(mongodb_host, mongodb_port);
+
+var db = new Db(mongodb_db, server, {safe: true});
 db.open(function (err, db) {
     if (!err) {
-        console.log("Connected to 'dataCollectordb' database");
+        console.log("Connected to '"+mongodb_db+"' database");
+	db.authenticate(mongodb_user, mongodb_pass,function(err, res) {
+        	if(!err) {
+                	console.log("Authenticated");
         db.collection('users', { safe: true }, function (err, collection) {
             if (err) {
                 console.log("The 'users' collection doesn't exist. Creating it with sample data...");
@@ -21,9 +33,18 @@ db.open(function (err, db) {
                 populateMetadata();
             }
         });
-    }
-});
+ 
+            	} else {
+                	console.log("Error in authentication.");
+                	console.log(err);
+            	}
+	});
 
+    }else{
+	console.log("Db open error: "+err);
+	}
+});
+exports.db=db;
 exports.login = function (req, res) {
     var username = req.body.email;
     var password = req.body.password;
