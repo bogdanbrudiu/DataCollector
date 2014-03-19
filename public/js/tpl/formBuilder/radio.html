@@ -1,0 +1,20 @@
+<div class="form-group">
+    <label for="<%= att %>"><%= model.schema[att].label || att %></label>
+
+<div class="btn-group" data-toggle="buttons" id="<%= att %>"
+<% if(model.schema[att].editorAttrs &&  model.schema[att].editorAttrs.disabled){ %>
+disabled="disabled"
+<% } %>
+>
+<% _.each( model.schema[att].options , function(val, i) { %>
+<label class="btn btn-primary
+<% if(model.get(att)==val){ %>
+active
+<% } %>
+"><input type="radio" id="<%= att %>-<%=i%>" name="<%= att %>" value="<%= val %>"><%= val %></label>   
+<%}); %>
+ 
+</div>
+
+</div>
+

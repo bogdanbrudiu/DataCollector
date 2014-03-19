@@ -10,7 +10,9 @@ define(function (require) {
         LogView    = require('app/views/log'),
         LoginView   = require('app/views/login');
         
-    var models      = require('app/models/models');
+    	var models      = require('app/models/models');
+
+var 	Basicauth = require('backbone.basicauth');
 
     return Backbone.Router.extend({
     
@@ -31,11 +33,26 @@ define(function (require) {
             $('#app').html(new LoginView({App: this}).render().el);
         },
         logout: function() {
-            localStorage.removeItem('email');
-            localStorage.removeItem('password');
-            this.loginState.set('loginStatus', false);
-            this.loginState.set('login', null);
-            this.login();
+
+		$.ajax({
+			url: '/logout',
+			type: 'GET',
+			context: this,
+			headers: Backbone.BasicAuth.getHeader({
+		    		username: this.loginState.get('login').username,
+    				password: this.loginState.get('login').password
+    			}),
+			success: function (data) {
+				clearInterval(this.refreshIntervalId);
+				localStorage.removeItem('email');
+				localStorage.removeItem('password');
+            			this.loginState.set('loginStatus', false);
+         			this.loginState.set('login', null);
+            			this.login();
+			}
+		});
+
+            
         },
         authenticate: function (email, password, success) {
             var self=this;    
@@ -70,7 +87,7 @@ define(function (require) {
                 } else {
                     var currentEntity = this.Collections.Entries.get(id);
                     if (currentEntity.dynamicCollection === null || currentEntity.dynamicCollection === undefined ) {
-                        currentEntity.initializeCollection();
+                        currentEntity.initializeCollection(this);
                     }
                     currentEntityCollection = currentEntity.dynamicCollection;
                 }
@@ -149,11 +166,12 @@ define(function (require) {
         },
         load: function () {
     
-                this.Collections.Entries = new models.Entries();
+                this.Collections.Entries = new models.Entries([],{auth: this.loginState.get('login')});
                 $.when(this.Collections.Entries.fetch(), this)
                   .done(function (data, App) {
-                        App.Collections.Users = new models.Users();
-                        App.Views.appView = new AppView({ currentCollection: "metadata", el: '#app', App: App });
+                        App.Collections.Users = new models.Users([],{auth: App.loginState.get('login')});
+                        
+			App.Views.appView = new AppView({ currentCollection: "metadata", el: '#app', App: App });
                         App.Views.tableView = new TableView({ model: App.Collections.Entries, el: "#table", App: App });
                         //App.Views.gridView = new GridView({ model: App.Collections.Entries, el: "#grid", App: App });
                         App.Views.headerView = new HeaderView({ model: App.Collections.Entries, loginState: App.loginState, el: '.header', App: App });

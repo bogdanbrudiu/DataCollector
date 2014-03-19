@@ -1,0 +1,9 @@
+<div class="form-group">
+    <label for="<%= att %>"><%= model.schema[att].label || att %></label>
+    <input type="text" class="form-control" id="<%= att %>" placeholder="<%= model.schema[att].placeholder || att %>" value="<%= model.get(att) %>"
+
+<% if(model.schema[att].editorAttrs &&  model.schema[att].editorAttrs.disabled){ %>
+disabled="disabled"
+<% } %>
+>
+</div>

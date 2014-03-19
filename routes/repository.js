@@ -8,8 +8,8 @@ var Server = mongo.Server,
  var mongodb_host = process.env.OPENSHIFT_MONGODB_DB_HOST || 'localhost';
  var mongodb_port = parseInt(process.env.OPENSHIFT_MONGODB_DB_PORT) || 27017;
  var mongodb_db = process.env.OPENSHIFT_APP_NAME || 'dataCollector';
- var mongodb_user = process.env.OPENSHIFT_MONGODB_DB_USERNAME || 'admin';
- var mongodb_pass = process.env.OPENSHIFT_MONGODB_DB_PASSWORD || 'xvuefKLK7Nha';
+ var mongodb_user = process.env.OPENSHIFT_MONGODB_DB_USERNAME;// || 'admin';
+ var mongodb_pass = process.env.OPENSHIFT_MONGODB_DB_PASSWORD;// || 'xvuefKLK7Nha';
 
 
 var server = new Server(mongodb_host, mongodb_port);
@@ -18,33 +18,71 @@ var db = new Db(mongodb_db, server, {safe: true});
 db.open(function (err, db) {
     if (!err) {
         console.log("Connected to '"+mongodb_db+"' database");
+
+	if(mongodb_user != "" && mongodb_user != null){
+
 	db.authenticate(mongodb_user, mongodb_pass,function(err, res) {
-        	if(!err) {
-                	console.log("Authenticated");
-        db.collection('users', { safe: true }, function (err, collection) {
-            if (err) {
-                console.log("The 'users' collection doesn't exist. Creating it with sample data...");
-                populateUsers();
-            }
-        });
-        db.collection('metadata', { safe: true }, function (err, collection) {
-            if (err) {
-                console.log("The 'metadata' collection doesn't exist. Creating it with sample data...");
-                populateMetadata();
-            }
-        });
- 
-            	} else {
-                	console.log("Error in authentication.");
-                	console.log(err);
-            	}
-	});
+        		if(!err) {
+                		console.log("Authenticated");
+
+       			 	db.collection('users', { safe: true }, function (err, collection) {
+            				if (err) {
+                				console.log("The 'users' collection doesn't exist. Creating it with sample data...");
+                				populateUsers();
+            				}
+        			});
+        			db.collection('metadata', { safe: true }, function (err, collection) {
+           				if (err) {
+               	 				console.log("The 'metadata' collection doesn't exist. Creating it with sample data...");
+                				populateMetadata();
+        				}
+       				});
+            		} else {
+                		console.log("Error in authentication.");
+        	        	console.log(err);
+	        	}
+		});
+	}else{
+     			 	db.collection('users', { safe: true }, function (err, collection) {
+            				if (err) {
+                				console.log("The 'users' collection doesn't exist. Creating it with sample data...");
+                				populateUsers();
+            				}
+        			});
+        			db.collection('metadata', { safe: true }, function (err, collection) {
+           				if (err) {
+               	 				console.log("The 'metadata' collection doesn't exist. Creating it with sample data...");
+                				populateMetadata();
+        				}
+       				});
+   
+	}
 
     }else{
 	console.log("Db open error: "+err);
 	}
 });
 exports.db=db;
+exports.apilogin = function (username, password, callbackResult) {
+   
+    console.log('API Login:[' + username + ']->[' + password + ']');
+    db.collection('users', function (err, collection) {
+        collection.findOne({ 'username': username, 'password': password }, function (err, item) {
+            if (err) {
+                console.log('Error:'+err);
+                    callbackResult(false);
+            } else {
+                if (item != undefined) {
+                    console.log('Success: ' + JSON.stringify(item));
+                    callbackResult(item);
+                } else {
+                    console.log('Not found!');
+                    callbackResult(false);
+                }
+            }
+        });
+    });
+};
 exports.login = function (req, res) {
     var username = req.body.email;
     var password = req.body.password;
@@ -81,7 +119,7 @@ exports.findById = function(req, res) {
 
 exports.getEntries = function (req, res) {
     var modifiedSince = req.query["modifiedSince"];
-    console.log('Get entries modifiedSince: ' + modifiedSince);
+    console.log('Get entries modifiedSince: ' + modifiedSince+' owner: '+req.user.owner+req.user.username+'/');
     if (modifiedSince) {
         if (modifiedSince == 'null') {
             modifiedSince = new Date(1000, 01, 01);
@@ -89,9 +127,14 @@ exports.getEntries = function (req, res) {
             modifiedSince = new Date(modifiedSince);
         }
         console.log('Getting entries with lastModified > ' + modifiedSince.toISOString());
-        req.collection.find({ "lastModified": { $gt: modifiedSince} }, { limit: 10, sort: [['_id', -1]] }).toArray(function (err, items) {
-            res.jsonp(items);
-        });
+	      	
+		req.collection.find(
+		{ 
+			"lastModified": { $gt: modifiedSince}, 
+			"owner": { $regex: req.user.owner+req.user.username+'/'+'.*', $options: 'i' }
+		}, { limit: 10, sort: [['_id', -1]] }).toArray(function (err, items) {
+            		res.jsonp(items);
+        	});
     } else {
         console.log('Get all entries');
         req.collection.find({}, { limit: 10, sort: [['_id', -1]] }).toArray(function (err, items) {
@@ -103,9 +146,12 @@ exports.getEntries = function (req, res) {
    
 };
 exports.addEntry = function (req, res) {
+	
+
+
     var entry = req.body;
     entry.lastModified = new Date();
-
+    entry.owner=req.user.owner+req.user.username+'/';
     console.log('Adding: ' + JSON.stringify(entry));
 
     req.collection.insert(entry, {}, function (err, results) {
@@ -120,12 +166,21 @@ exports.addEntry = function (req, res) {
 exports.updateEntry = function (req, res) {
     var id = req.params.id;
     var entry = req.body;
-    console.log('Updating: ' + id);
+ console.log('Updating: ' + JSON.stringify(entry));
+
+/*
+	if(entry.owner.lastIndexOf(req.user.owner+req.user.username+'/', 0) !== 0)
+	{
+		console.log('Ownership issues! Owner:'+entry.owner+' Trespasser:'+req.user.owner+req.user.username+'/'+' '+entry.owner.lastIndexOf(req.user.owner+req.user.username+'/', 0));
+		res.send({ 'error': 'Ownership issues!' });
+	}
+*/
+
     entry.lastModified = new Date();
     delete entry._id;
 
     console.log(JSON.stringify(entry));
-    req.collection.update({ _id: new BSON.ObjectID(req.params.id) }, { $set: entry }, { safe: true, multi: false }, function (err, result) {
+    req.collection.update({ _id: new BSON.ObjectID(req.params.id), "owner": { $regex: req.user.owner+req.user.username+'/'+'.*', $options: 'i' } }, { $set: entry }, { safe: true, multi: false }, function (err, result) {
         if (err) {
             console.log('Error updating: ' + err);
             res.send({ 'error': 'An error has occurred' });
@@ -133,18 +188,6 @@ exports.updateEntry = function (req, res) {
             console.log('' + result + ' document(s) updated');
             entry._id = id;
             res.send(entry);
-        }
-    })
-};
-exports.deleteEntry = function (req, res) {
-    var id = req.params.id;
-    console.log('Deleting: ' + id);
-    req.collection.remove({ _id: new BSON.ObjectID(req.params.id) }, function (err, result) {
-        if (err) {
-            res.send({ 'error': 'An error has occurred - ' + err });
-        } else {
-            console.log('' + result + ' document(s) deleted');
-            res.send("success");
         }
     })
 };
@@ -160,10 +203,12 @@ var populateUsers = function() {
  
     console.log("Populating users Collection database...");
     var users = [
-        { "username": "admin", "password": "admin", "isAdmin": true, "lastModified": new Date(), "deleted": false },
-        { "username": "user1", "password": "user1", "isAdmin": false, "metadata": "ed1", "lastModified": new Date(), "deleted": false },
-        { "username": "user2", "password": "user2", "isAdmin": false, "metadata": "ed2", "lastModified": new Date(), "deleted": false },
-        { "username": "ExitPoll", "password": "ExitPoll", "isAdmin": false, "metadata": "ExitPoll", "lastModified": new Date(), "deleted": false }
+        { "owner":"/",  "username": "admin", "password": "admin", "isAdmin": true, "lastModified": new Date(), "deleted": false },
+        { "owner":"/admin/", "username": "user1", "password": "user1", "isAdmin": false, "metadata": "ed1", "lastModified": new Date(), "deleted": false },
+        { "owner":"/admin/", "username": "user2", "password": "user2", "isAdmin": false, "metadata": "ed2", "lastModified": new Date(), "deleted": false },
+        { "owner":"/admin/", "username": "ExitPoll", "password": "ExitPoll", "isAdmin": true, "metadata": "ExitPoll", "lastModified": new Date(), "deleted": false }, 
+	{ "owner":"/admin/ExitPoll/", "username": "ExitPollUser1", "password": "ExitPollUser1", "isAdmin": false, "metadata": "ExitPoll", "lastModified": new Date(), "deleted": false }
+
     ];
  
     db.collection('users', function(err, collection) {
@@ -174,8 +219,9 @@ var populateUsers = function() {
 var populateMetadata = function() {
     console.log("Populating metadata Collection database...");
     var entries = [
-        {
-            "name": "name", "schema": '\
+	{
+	"owner":"/admin/", 
+	"name": "name", "schema": '\
 {  "_id": {\
     "type": "Text",\
     "editorAttrs": {\
@@ -641,8 +687,9 @@ var populateMetadata = function() {
   }\
 }', "lastModified": new Date(), "deleted": false
         },
-         {
-             "name": "ed1", "schema": '\
+	{
+	"owner":"/admin/", 
+        "name": "ed1", "schema": '\
 {\
     "_id":{"type":"Text","editorAttrs":{"disabled":true}},\
     "col1":{"type":"Text","validators":["required"], "showInTable":"true"},\
@@ -650,9 +697,10 @@ var populateMetadata = function() {
     "col3":{"type":"Text","validators":["required"], "showInTable":"true"},\
     "lastModified":{"type":"Text","editorAttrs":{"disabled":true}}\
 }', "lastModified": new Date(), "deleted": false
-         },
-         {
-             "name": "ed2", "schema": '\
+        },
+	{
+	"owner":"/admin/", 
+	"name": "ed2", "schema": '\
 {\
     "_id":{"type":"Text","editorAttrs":{"disabled":true}},\
     "col_1":{"type":"Text","validators":["required"], "showInTable":"true"},\
@@ -660,9 +708,10 @@ var populateMetadata = function() {
     "col_3":{"type":"Text","validators":["required"], "showInTable":"true"},\
     "lastModified":{"type":"Text","editorAttrs":{"disabled":true}}\
 }', "lastModified": new Date(), "deleted": false
-         },
-         {
-             "name": "ExitPoll", "schema": '\
+        },
+        {
+	"owner":"/admin/ExitPoll/", 
+        "name": "ExitPoll", "schema": '\
 {\
     "_id":{"type":"Text","editorAttrs":{"disabled":true}},\
     "Sex":{ "type": "Radio",\

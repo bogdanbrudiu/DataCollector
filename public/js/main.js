@@ -31,9 +31,13 @@ require.config({
     }
 });
 
-require(['jquery', 'backbone', 'bootstrap', 'app/app', 'app/models/models'], function ($, Backbone, Bootstrap, AppRouter, models) {
+require(['jquery', 'bootstrap'], function($, Bootstrap){
+	$("#loading").modal();
 
 
+require([ 'backbone',  'app/app', 'app/models/models'], function ( Backbone, AppRouter, models) {
+
+$("#loading").modal("hide");
    
         var App = new AppRouter();
 
@@ -71,4 +75,5 @@ require(['jquery', 'backbone', 'bootstrap', 'app/app', 'app/models/models'], fun
             App.load();
         } 
 
+});
 });

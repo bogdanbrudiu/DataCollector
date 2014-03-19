@@ -1,7 +1,8 @@
 define(function (require) {
      var $           = require('jquery'),
         Backbone    = require('backbone'),
-	localStorage = require('backbone.localStorage');
+	Basicauth = require('backbone.basicauth'),
+	LocalStorage = require('backbone.localStorage');
     
     
     var refreshFromServer=function (options) {
@@ -10,7 +11,7 @@ define(function (require) {
         var lastModifiedEntry = this.max(function (m) { return new Date(m.get('lastModified')); });
         var modifiedSince = (lastModifiedEntry !== null && lastModifiedEntry!= -Infinity) ? lastModifiedEntry.get('lastModified') : "null";
         App.log('Getting entries newer then: ' + modifiedSince);
-        Backbone.ajaxSync('read', this, { url: (this.url + '?modifiedSince=' + modifiedSince), success: function (newEntries) {
+        Backbone.ajaxSync('read', this, { url: (this.url + '?modifiedSince=' + modifiedSince ), success: function (newEntries) {
     
             App.log(newEntries.length + ' ' + (newEntries.length == 1 ? 'entry' : 'entries') + ' downloaded!');
     
@@ -54,7 +55,7 @@ define(function (require) {
     
             App.log('Pushing modified data from local');
             var modifiedEnties = collection.filter(function (entry) {
-                return entry.get('isDirty') == true;
+                return entry.get('isDirty') == true && entry.get('lastModified') != '';
             });
             App.log(modifiedEnties.length + ' ' + (modifiedEnties.length == 1 ? 'entry' : 'entries') + ' to push!');
             $.each(modifiedEnties, function (index, modifiedLocalEntry) {
@@ -141,14 +142,14 @@ define(function (require) {
             }
             return Backbone.Model.prototype.save.call(this, attrs, options);
         },
-        initializeCollection:function(){
+        initializeCollection:function(App){
             var self=this;
             var schema={};
             try {
                 schema = parseSchema(JSON.parse(this.get('schema')));
     
             } catch (e) {
-                //App.log('Schema is not valid for'+ this.get('_id'));
+                App.log('Schema is not valid for'+ this.get('_id'));
                 console.log(e);
             }
     
@@ -170,15 +171,19 @@ define(function (require) {
                 }
             });
             this.collectionDef = Backbone.Collection.extend({
-                    url: "../collections/"+this.get('_id'), 
-                    model: this.modelDef,
-                    localStorage: new Backbone.LocalStorage(this.get('_id') + "-backbone"),
-                    refreshFromServer: refreshFromServer,
-                    getSchema: function () {
-                        return schema;
-                    }
-                });
-            this.dynamicCollection=new  this.collectionDef();
+		initialize: function(models, options)
+		{
+			this.localStorage= new Backbone.LocalStorage(options.auth.username+"-"+options.metadata_id);
+			this.credentials = {    username: options.auth.username,    password: options.auth.password};
+		},
+                url: "../collections/"+this.get('_id'), 
+                model: this.modelDef,
+                refreshFromServer: refreshFromServer,
+                getSchema: function () {
+                	return schema;
+                }
+            });
+            this.dynamicCollection=new  this.collectionDef([],{auth: App.loginState.get('login'), metadata_id:this.get('_id')});
         },
         events: {
             "change":"initializeCollection"
@@ -193,13 +198,14 @@ define(function (require) {
         idAttribute: "_id",
         defaults: {
             _id: null,
-            lastModified: "",
+	    lastModified: "",
             isAdmin:false,
             deleted: false,
             isDirty: false
         },
         schema: {
             _id: { type: 'Text', editorAttrs: { disabled: true } },
+            owner: { type: 'Text', validators: ['required'], showInTable: true , editorAttrs: { disabled: true } },
             username: { type: 'Text', validators: ['required'], showInTable: true },
             password: { type: 'Text', validators: ['required'], showInTable: true },
             metadata: { type: 'Text', validators: ['required'], showInTable: true },
@@ -220,17 +226,25 @@ define(function (require) {
     });
     
     var Users = Backbone.Collection.extend({
+	initialize: function(models, options)
+	{
+		this.localStorage=new Backbone.LocalStorage(options.auth.username+"-"+"users");
+		this.credentials = {    username: options.auth.username,    password: options.auth.password};
+	},
         model: User,
         getSchema: function () { return parseSchema(new User().schema); },
-        localStorage: new Backbone.LocalStorage("users-backbone"),
         url: "../collections/users",
         refreshFromServer: refreshFromServer
     });
     
     var Entries = Backbone.Collection.extend({
+	initialize: function(models, options)
+	{
+		this.localStorage=new Backbone.LocalStorage(options.auth.username+"-"+"metadata");
+		this.credentials = {    username: options.auth.username,    password: options.auth.password};
+	},
         model: Entry,
         getSchema: function () { return parseSchema(new Entry().schema); },
-        localStorage: new Backbone.LocalStorage("metadata-backbone"),
         url: "../collections/metadata",
         refreshFromServer: refreshFromServer
     });

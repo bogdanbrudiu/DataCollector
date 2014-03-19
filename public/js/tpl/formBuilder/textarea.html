@@ -1,0 +1,10 @@
+<div class="form-group">
+    <label for="<%= att %>"><%= model.schema[att].label || att %></label>
+<textarea id="<%= att %>" placeholder="<%= model.schema[att].placeholder || att %>" class="form-control" rows="3"
+<% if(model.schema[att].editorAttrs &&  model.schema[att].editorAttrs.disabled){ %>
+disabled="disabled"
+<% } %>
+><%= model.get(att) %></textarea>
+
+
+</div>

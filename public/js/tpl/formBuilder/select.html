@@ -1,0 +1,24 @@
+<div class="form-group">
+    <label for="<%= att %>"><%= model.schema[att].label || att %></label>
+
+<select class="form-control" id="<%= att %>"
+<% if(model.schema[att].editorAttrs &&  model.schema[att].editorAttrs.disabled){ %>
+disabled="disabled"
+<% } %>
+>
+<% _.each( model.schema[att].options , function(val, i) { %>
+
+  <option value="<%= val %>"
+<% if(model.get(att)==val){ %>
+select
+<% } %>
+
+><%= val %></option>
+  
+<%}); %>
+ 
+</select>
+
+</div>
+
+

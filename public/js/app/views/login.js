@@ -31,7 +31,7 @@ define(function (require) {
                 }
                 else { // If not, send them back to the home page
                 
-                    if($('#inputRememberMe').val())
+                    if($('#inputRememberMe').is(':checked') == true)
                     {
                         window.localStorage.email=$('#inputEmail').val();
                         window.localStorage.password=$('#inputPassword').val();

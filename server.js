@@ -4,11 +4,23 @@ var express = require('express'),
     repository= require('./routes/repository');
  
 var app = express();
+app.use(express.cookieParser());
+app.use(express.session({secret: '1234567890QWERTY'}));
+app.use(function (req, res, next) {
+  if (!req.session.authStatus || 'loggedOut' === req.session.authStatus) {
+    req.session.authStatus = 'loggingIn';
 
+    // cause Express to issue 401 status so browser asks for authentication
+    req.user = false;
+    req.remoteUser = false;
+    if (req.headers && req.headers.authorization) { delete req.headers.authorization; }
+  }
+  next();
+});
 
 app.configure(function () {
 	app.set('port', process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 8080);
-	app.set('host', process.env.OPENSHIFT_NODEJS_IP || process.env.IP || '127.0.0.1');
+	app.set('host', process.env.OPENSHIFT_NODEJS_IP || process.env.IP || '127.0.0.1');//'192.168.1.10');
 
 
 
@@ -19,13 +31,31 @@ app.configure(function () {
 });
 
 
+var basicAuth = express.basicAuth,
+auth = function(req, res, next) {
+
+            basicAuth(function(username, password, callback) {
+		repository.apilogin(username, password, function(result) { 
+			callback(null /* error */, result);
+		});
+            })(req, res, function(){ req.session.authStatus = 'loggedIn'; next();});
+};
+
+
 app.param('collectionName', function (req, res, next, collectionName) { req.collection = repository.db.collection(collectionName); return next() });
 app.post('/login', repository.login);
-//app.get('/', function(req, res) {  res.send('please select a collection, e.g., /collections/messages')})
-app.get('/collections/:collectionName', repository.getEntries);
-app.post('/collections/:collectionName', repository.addEntry);
-app.put('/collections/:collectionName/:id',repository.updateEntry);
-app.delete('/collections/:collectionName/:id',repository.deleteEntry);
+app.get('/collections/', auth, function(req, res) {  res.send('please select a collection, e.g., /collections/messages')})
+app.get('/collections/:collectionName', auth, repository.getEntries);
+app.post('/collections/:collectionName', auth, repository.addEntry);
+app.put('/collections/:collectionName/:id', auth, repository.updateEntry);
+
+
+app.get('/logout', auth, function (req, res) {
+  console.log('API Logout:[' + req.user.username + ']');
+  delete req.session.authStatus;
+  res.send("Done!");
+});   
+
 
 var server= http.createServer(app)
 console.log("Trying to start server at", app.get('host')+ ":" + app.get('port'));

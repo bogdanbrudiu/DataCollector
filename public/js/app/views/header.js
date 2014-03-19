@@ -17,14 +17,14 @@ define(function (require) {
             this.listenTo(this.model, 'change', this.render);
             this.listenTo(this.model, 'add', this.render);
             var self = this;
-            setInterval(function(){
+            this.App.refreshIntervalId = setInterval(function(){
                 $(self.el).find('#syncimage').removeClass("btn-warning");
                 for (var i = 0; i < self.App.Collections.Entries.length; i++) {
                     var currentEntity=self.App.Collections.Entries.at(i);
                     
                     
                     if (currentEntity.dynamicCollection === null || currentEntity.dynamicCollection === undefined ) {
-                        currentEntity.initializeCollection();
+                        currentEntity.initializeCollection(self.App);
                     }
                    
                     
