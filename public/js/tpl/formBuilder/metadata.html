@@ -1,0 +1,74 @@
+
+<!--
+<style>
+.component {
+  cursor: pointer;
+}
+
+.target:after{
+  float:left;
+  content: " ";
+  height: 77px; 
+  margin-top: 3px;
+  background: #f0f0f0;
+  width: 100%;
+  border: 1px dashed #ccc;
+}
+
+.component input {
+  cursor: pointer;
+}
+
+.component textarea {
+  resize: vertical;
+}
+
+
+
+.dragged .form-group {
+  padding: 8px 4px;
+  border: 1px dotted #ccc;
+
+  background: white;
+  box-shadow: 0px 0px 30px #999;
+  -webkit-transition: -webkit-transform 0.1s ease-out;
+  overflow: hidden;
+}
+
+</style>
+<div class='row'>
+    <div class='col-xs-6'>
+		<div class="panel panel-default">
+			<div class="panel-body" id="metadatacontent">
+
+			</div>
+		</div>
+    </div>
+    <div class='col-xs-6'>
+		<div class="panel panel-default">
+			<div class="panel-body" id="repository">
+
+			</div>
+		</div>
+    </div>
+</div>
+-->
+
+    <div>
+		<div class="panel panel-default">
+			<div class="panel-body" id="metadatacontent">
+
+			</div>
+		</div>
+    </div>
+
+
+
+
+   
+<textarea id="<%= id %>" placeholder="placeholder" class="form-control" rows="3"
+<% if(disabled){ %>
+disabled="disabled"
+<% } %>
+><%= value %></textarea>
+   

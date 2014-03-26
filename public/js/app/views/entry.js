@@ -1,25 +1,25 @@
-define(function (require) {
-    var Backbone    = require('backbone');
-    var _    = require('underscore');    
-	var Forms = require('backbone-forms');
-	var Template = require('text!tpl/EntryView.html');
-
-
-var TextView   = require('app/views/formBuilder/text');
-var TextAreaView   = require('app/views/formBuilder/textarea');
-var RadioView   = require('app/views/formBuilder/radio');
-var CheckBoxView   = require('app/views/formBuilder/checkbox');
-var SelectView   = require('app/views/formBuilder/select');
-
-    return Backbone.View.extend({
+define(['backbone','underscore','text!tpl/EntryView.html',
+        'app/views/formBuilder/editor'
+        ],function (Backbone, _, Template,
+        		EditorView) {
+   
+	return Backbone.View.extend({
 	template: _.template(Template),
     
         initialize: function (options) {
+        	this.views=[];
             this.App = options.App;
             this.render();
             _.bindAll(this, 'changed');
+            
         },
-    
+        close: function(){
+        	for(var i=0;i< this.views.length;i++)
+        	{
+        		this.views[i].close();
+        	}
+      	  this.undelegateEvents();
+  		},
         events: {
             "click .save": "save",
             "click .delete": "softDelete",
@@ -33,32 +33,22 @@ var SelectView   = require('app/views/formBuilder/select');
             $(this.el).html($(form.el).append(this.template()));
     */
 
+
+for(var i=0;i< this.views.length;i++)
+{
+	this.views[i].close();
+}
+this.views=[];
 $(this.el).html("");
 
 for(var entryKey in this.model.schema)
 {
 var entry=this.model.schema[entryKey];
-	switch (entry.type.toLowerCase())
-	{
-		case "text":
-		  var control=new TextView({model: this.model, att: entryKey});   
-		  break;
-		case "textarea":
-		  var control=new TextAreaView({model: this.model, att: entryKey});   
-		  break;
-		case "radio":
-		  var control=new RadioView({model: this.model, att: entryKey});   
-		  break;
-		case "checkboxes":
-		  var control=new CheckBoxView({model: this.model, att: entryKey});   
-		  break;
-		case "select":
-		  var control=new SelectView({model: this.model, att: entryKey});   
-		  break;		
-		default:
-		  break;
-	}
+entry.id=entryKey;
+var control=new EditorView({model: entry, value:this.model.get(entryKey)});
+this.views.push(control);
 $(this.el).append(control.el);
+control.render();
 }
  $(this.el).append(this.template());
 

@@ -13,7 +13,7 @@ define(function (require) {
             this.App = options.App;
             this.loginState = options.loginState;
             this.listenTo(this.loginState, 'change', this.render);
-            this.listenTo(this.model, 'reset', this.render);
+            //this.listenTo(this.model, 'reset', this.render);
             this.listenTo(this.model, 'change', this.render);
             this.listenTo(this.model, 'add', this.render);
             var self = this;
@@ -28,21 +28,21 @@ define(function (require) {
                     }
                    
                     
-                    //if(navigator.onLine)
-                    //{
+                    if(navigator.onLine)
+                    {
                         //do auto sync
-                        //App.sync();
-                    //}else
-                    //{
+                    	self.App.sync();
+                    }else
+                    {
                         if(currentEntity.dynamicCollection.where({isDirty:true}).length>0 ||
                         currentEntity.dynamicCollection.where({lastModified:""}).length>0)
                         {
                             //change color
                              $(self.el).find('#syncimage').addClass("btn-warning");
                         }      
-                    //}
+                    }
                 }
-            }, 5000);
+            }, 600000);
             
             this.render();
         },

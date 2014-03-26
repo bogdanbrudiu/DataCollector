@@ -5,8 +5,11 @@ require.config({
     paths: {
         app: '../app',
         tpl: '../tpl',
-	jquery: 'jquery-1.11.0',
-	bootstrap: '../../bootstrap/js/bootstrap'
+        helper: '../app/helper',
+        jquery: 'jquery-1.11.0',
+		bootstrap: '../../bootstrap/js/bootstrap',
+		polyglot: 'polyglot',
+		async: 'async'
     },
 
     map: {
@@ -27,20 +30,28 @@ require.config({
         },
         'underscore': {
             exports: '_'
-        } 
+        },
+        'polyglot': {
+            exports: 'Polyglot'
+        }
     }
 });
 
-require(['jquery', 'bootstrap'], function($, Bootstrap){
-	$("#loading").modal();
 
 
-require([ 'backbone',  'app/app', 'app/models/models'], function ( Backbone, AppRouter, models) {
 
-$("#loading").modal("hide");
-   
+require([ 'jquery', 'bootstrap', 'backbone',  'app/app', 'app/models/models'], function ($, Bootstrap, Backbone, AppRouter, models) {
+
+	 var locale = localStorage.getItem('locale') || 'en';
+	  // Gets the language file.
+	  $.getJSON('locales/en.json',function(data) {
+	    // Instantiates polyglot with phrases.
+	    window.polyglot = new Polyglot({phrases: data});
+
+		
+		
         var App = new AppRouter();
-
+        window.location.hash='';
         App.loginState = new models.Login();
         App.Collections.Logs = new models.Logs();
     
@@ -74,6 +85,7 @@ $("#loading").modal("hide");
         } else {
             App.load();
         } 
+	  }
+	  );
 
-});
 });

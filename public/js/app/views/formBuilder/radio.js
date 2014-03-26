@@ -4,16 +4,21 @@ define(function (require) {
     var Template = require('text!tpl/formBuilder/radio.html');
 
     return Backbone.View.extend({
-	template: _.template(Template),
-
+    	className:'form-group',
         initialize: function (options) {
-	    this.att=options.att;
-            //this.listenTo(this.model, 'change', this.render);
-            this.render();
+    	this.template=options.template || _.template(Template);
+    	
+    	this.id=this.model.id;
+		this.label=this.model.label || this.id;
+		this.placeholder=this.model.placeholder || this.id;
+		this.value=this.model.value || options.value;
+		this.disabled=this.model.editorAttrs && this.model.editorAttrs.disabled;
+    	this.options=this.model.options;
+
         },
     
         render: function () {
-            $(this.el).html(this.template({model:this.model, att: this.att}));
+        	$(this.el).html(this.template({id:this.id, label:this.label, placeholder: this.placeholder, value:this.value, disabled: this.disabled, options: this.options}));
             return this;
         },
     

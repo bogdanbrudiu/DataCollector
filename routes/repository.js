@@ -14,7 +14,7 @@ var Server = mongo.Server,
 
 var server = new Server(mongodb_host, mongodb_port);
 
-var db = new Db(mongodb_db, server, {safe: true});
+var db = new Db(mongodb_db, server, {auto_reconnect: true, safe: true});
 db.open(function (err, db) {
     if (!err) {
         console.log("Connected to '"+mongodb_db+"' database");
@@ -69,7 +69,7 @@ exports.apilogin = function (username, password, callbackResult) {
     db.collection('users', function (err, collection) {
         collection.findOne({ 'username': username, 'password': password }, function (err, item) {
             if (err) {
-                console.log('Error:'+err);
+                console.log('Error apilogin:'+err);
                     callbackResult(false);
             } else {
                 if (item != undefined) {
@@ -90,6 +90,7 @@ exports.login = function (req, res) {
     db.collection('users', function (err, collection) {
         collection.findOne({ 'username': username, 'password': password }, function (err, item) {
             if (err) {
+            	 console.log('Error login: '+err);
                 res.send({ 'error': 'An error has occurred' });
             } else {
                 if (item != undefined) {
@@ -109,6 +110,7 @@ exports.findById = function(req, res) {
     console.log('Retrieving entry: ' + id);
     req.collection.findOne({'_id':new BSON.ObjectID(id)}, function(err, item) {
         if (err) {
+        	console.log('Error retrieving entry: '+err);
             res.send({ 'error': 'An error has occurred' });
         } else {
             console.log('Success: ' + JSON.stringify(item));
@@ -118,6 +120,7 @@ exports.findById = function(req, res) {
 }; 
 
 exports.getEntries = function (req, res) {
+	
     var modifiedSince = req.query["modifiedSince"];
     console.log('Get entries modifiedSince: ' + modifiedSince+' owner: '+req.user.owner+req.user.username+'/');
     if (modifiedSince) {
@@ -126,15 +129,29 @@ exports.getEntries = function (req, res) {
         } else {
             modifiedSince = new Date(modifiedSince);
         }
-        console.log('Getting entries with lastModified > ' + modifiedSince.toISOString());
+        console.log('Getting entries of '+req.collection.collectionName+' with lastModified > ' + modifiedSince.toISOString());
+	      	if(req.collection.collectionName=='metadata'){
+	      		 
+	      		//ok so if we are talking about metadata allow user to load his allocated metadata
+	      		req.collection.find(
+	    				{ 
+	    					"lastModified": { $gt: modifiedSince}, 
+	    					$or: [
+	    					{"owner": { $regex: req.user.owner+req.user.username+'/'+'.*', $options: 'i' }},
+	    					{"name": req.user.metadata}]
+	    				}, { limit: 10, sort: [['_id', -1]] }).toArray(function (err, items) {
+	    		            		res.jsonp(items);
+	    		        	});
 	      	
-		req.collection.find(
-		{ 
-			"lastModified": { $gt: modifiedSince}, 
-			"owner": { $regex: req.user.owner+req.user.username+'/'+'.*', $options: 'i' }
-		}, { limit: 10, sort: [['_id', -1]] }).toArray(function (err, items) {
-            		res.jsonp(items);
-        	});
+	      	}else{
+				req.collection.find(
+				{ 
+					"lastModified": { $gt: modifiedSince}, 
+					"owner": { $regex: req.user.owner+req.user.username+'/'+'.*', $options: 'i' }
+				}, { limit: 10, sort: [['_id', -1]] }).toArray(function (err, items) {
+		            		res.jsonp(items);
+		        	});
+    		}
     } else {
         console.log('Get all entries');
         req.collection.find({}, { limit: 10, sort: [['_id', -1]] }).toArray(function (err, items) {
@@ -156,6 +173,7 @@ exports.addEntry = function (req, res) {
 
     req.collection.insert(entry, {}, function (err, results) {
         if (err) {
+        	console.log('Error adding: '+err);
             res.send({ 'error': 'An error has occurred' });
         } else {
             console.log('Success: ' + JSON.stringify(results[0]));
@@ -204,10 +222,14 @@ var populateUsers = function() {
     console.log("Populating users Collection database...");
     var users = [
         { "owner":"/",  "username": "admin", "password": "admin", "isAdmin": true, "lastModified": new Date(), "deleted": false },
+        
         { "owner":"/admin/", "username": "user1", "password": "user1", "isAdmin": false, "metadata": "ed1", "lastModified": new Date(), "deleted": false },
-        { "owner":"/admin/", "username": "user2", "password": "user2", "isAdmin": false, "metadata": "ed2", "lastModified": new Date(), "deleted": false },
+        
         { "owner":"/admin/", "username": "ExitPoll", "password": "ExitPoll", "isAdmin": true, "metadata": "ExitPoll", "lastModified": new Date(), "deleted": false }, 
-	{ "owner":"/admin/ExitPoll/", "username": "ExitPollUser1", "password": "ExitPollUser1", "isAdmin": false, "metadata": "ExitPoll", "lastModified": new Date(), "deleted": false }
+        { "owner":"/admin/ExitPoll/", "username": "ExitPollUser1", "password": "ExitPollUser1", "isAdmin": false, "metadata": "ExitPoll", "lastModified": new Date(), "deleted": false },
+    
+        { "owner":"/admin/", "username": "todo", "password": "todo", "isAdmin": false, "metadata": "Todo", "lastModified": new Date(), "deleted": false },
+        { "owner":"/admin/", "username": "sales", "password": "sales", "isAdmin": false, "metadata": "Sales", "lastModified": new Date(), "deleted": false }
 
     ];
  
@@ -687,6 +709,9 @@ var populateMetadata = function() {
   }\
 }', "lastModified": new Date(), "deleted": false
         },
+        
+        
+        
 	{
 	"owner":"/admin/", 
         "name": "ed1", "schema": '\
@@ -698,17 +723,9 @@ var populateMetadata = function() {
     "lastModified":{"type":"Text","editorAttrs":{"disabled":true}}\
 }', "lastModified": new Date(), "deleted": false
         },
-	{
-	"owner":"/admin/", 
-	"name": "ed2", "schema": '\
-{\
-    "_id":{"type":"Text","editorAttrs":{"disabled":true}},\
-    "col_1":{"type":"Text","validators":["required"], "showInTable":"true"},\
-    "col_2":{"type":"Text","validators":["required"], "showInTable":"true"},\
-    "col_3":{"type":"Text","validators":["required"], "showInTable":"true"},\
-    "lastModified":{"type":"Text","editorAttrs":{"disabled":true}}\
-}', "lastModified": new Date(), "deleted": false
-        },
+        
+        
+        
         {
 	"owner":"/admin/ExitPoll/", 
         "name": "ExitPoll", "schema": '\
@@ -763,7 +780,38 @@ var populateMetadata = function() {
       ,"validators":["required"], "showInTable":"true"},\
     "lastModified":{"type":"Text","editorAttrs":{"disabled":true}}\
 }', "lastModified": new Date(), "deleted": false
-         }
+         },
+         
+         
+     	{
+        		"owner":"/admin/", 
+        		"name": "Todo", "schema": '\
+        	{\
+        	    "_id":{"type":"Text","editorAttrs":{"disabled":true}},\
+        	    "Task":{"type":"Text","validators":["required"], "showInTable":"true"},\
+        	    "Cand":{"type":"Text","validators":["required"], "showInTable":"true"},\
+        	    "Urgenta":{"type":"Text","validators":["required"], "showInTable":"true"},\
+        	    "lastModified":{"type":"Text","editorAttrs":{"disabled":true}}\
+        	}', "lastModified": new Date(), "deleted": false
+        	        }
+         ,
+         
+         
+      	{
+         		"owner":"/admin/", 
+         		"name": "Sales", "schema": '\
+         	{\
+         	    "_id":{"type":"Text","editorAttrs":{"disabled":true}},\
+         		"lat":{"type":"Text", "showInTable":"false"},\
+         		"lng":{"type":"Text", "showInTable":"false"},\
+         		"label":{"type":"Text", "showInTable":"false"},\
+         	    "Client":{"type":"Text","validators":["required"], "showInTable":"true"},\
+         	    "Status":{"type":"Text","validators":["required"], "showInTable":"true"},\
+         	    "Req":{"type":"Text","validators":["required"], "showInTable":"false"},\
+         		"FollowUp":{"type":"Text","validators":["required"], "showInTable":"false"},\
+         	    "lastModified":{"type":"Text","editorAttrs":{"disabled":true}}\
+         	}', "lastModified": new Date(), "deleted": false
+         	        }
     ];
 
     db.collection('metadata', function (err, collection) {

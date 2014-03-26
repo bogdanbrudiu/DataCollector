@@ -11,6 +11,7 @@ define(function (require) {
         var lastModifiedEntry = this.max(function (m) { return new Date(m.get('lastModified')); });
         var modifiedSince = (lastModifiedEntry !== null && lastModifiedEntry!= -Infinity) ? lastModifiedEntry.get('lastModified') : "null";
         App.log('Getting entries newer then: ' + modifiedSince);
+        App.showPleaseWait();
         Backbone.ajaxSync('read', this, { url: (this.url + '?modifiedSince=' + modifiedSince ), success: function (newEntries) {
     
             App.log(newEntries.length + ' ' + (newEntries.length == 1 ? 'entry' : 'entries') + ' downloaded!');
@@ -105,6 +106,7 @@ define(function (require) {
             if (options && options.success) {
                 options.success();
             }
+            App.hidePleaseWait();
         }
         });
     };
@@ -132,7 +134,7 @@ define(function (require) {
         schema: {
             _id:        { type: 'Text', editorAttrs: { disabled: true } },
             name:    { type: 'Text', validators: ['required'], showInTable:true },
-            schema: { type: 'TextArea', showInTable: true },
+            schema: { type: 'Metadata' },
             lastModified:   { type: 'Text', editorAttrs: { disabled: true } }
         },
         save: function (attrs, options) {
@@ -205,9 +207,9 @@ define(function (require) {
         },
         schema: {
             _id: { type: 'Text', editorAttrs: { disabled: true } },
-            owner: { type: 'Text', validators: ['required'], showInTable: true , editorAttrs: { disabled: true } },
+            owner: { type: 'Text', validators: ['required'], editorAttrs: { disabled: true } },
             username: { type: 'Text', validators: ['required'], showInTable: true },
-            password: { type: 'Text', validators: ['required'], showInTable: true },
+            password: { type: 'Text', validators: ['required'] },
             metadata: { type: 'Text', validators: ['required'], showInTable: true },
             isAdmin: { type: 'Checkbox', showInTable: true },
             lastModified: { type: 'Text', editorAttrs: { disabled: true } }

@@ -1,15 +1,15 @@
-<div class="form-group">
-    <label for="<%= att %>"><%= model.schema[att].label || att %></label>
 
-<select class="form-control" id="<%= att %>"
-<% if(model.schema[att].editorAttrs &&  model.schema[att].editorAttrs.disabled){ %>
+    <label for="<%= id %>"><%= label %></label>
+
+<select class="form-control" id="<%= id %>"
+<% if(disabled){ %>
 disabled="disabled"
 <% } %>
 >
-<% _.each( model.schema[att].options , function(val, i) { %>
+<% _.each( options , function(val, i) { %>
 
   <option value="<%= val %>"
-<% if(model.get(att)==val){ %>
+<% if(value==val){ %>
 select
 <% } %>
 
@@ -19,6 +19,5 @@ select
  
 </select>
 
-</div>
 
 

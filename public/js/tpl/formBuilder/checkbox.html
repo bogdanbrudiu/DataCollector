@@ -1,20 +1,19 @@
-<div class="form-group">
-    <label for="<%= att %>"><%= model.schema[att].label || att %></label>
 
-<div class="btn-group" data-toggle="buttons" id="<%= att %>"
-<% if(model.schema[att].editorAttrs &&  model.schema[att].editorAttrs.disabled){ %>
+    <label for="<%= id %>"><%= label %></label>
+
+<div class="btn-group" data-toggle="buttons" id="<%= id %>"
+<% if(disabled){ %>
 disabled="disabled"
 <% } %>
 >
-<% _.each( model.schema[att].options , function(val, i) { %>
+<% _.each( options , function(val, i) { %>
 <label class="btn btn-primary
-<% if(model.get(att)==val){ %>
+<% if(value==val){ %>
 active
 <% } %>
-"><input type="checkbox" id="<%= att %>-<%=i%>" name="<%= att %>" value="<%= val %>"><%= val %></label>   
+"><input type="checkbox" id="<%= id %>-<%=i%>" name="<%= id %>" value="<%= val %>"><%= val %></label>   
 <%}); %>
  
 </div>
 
-</div>
 

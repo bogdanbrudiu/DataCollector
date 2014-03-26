@@ -4,14 +4,12 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+	<base href="/" >
     <title>Offine DataCollector</title>
 
     <!-- Bootstrap -->
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
-
-
-
+ 	<link href="css/site.css" rel="stylesheet">
 
 <!--
        
@@ -26,7 +24,7 @@
              };
         </script>
 -->        
-    <script data-main="js/main" src="js/require.js"></script>
+  
         
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -36,12 +34,14 @@
     <![endif]-->
   </head>
  <body id="app">
-      
-<div class="modal" id="loading" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<center>      
+Loading...
+</center>      
+<div class="modal" id="pleaseWaitDialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">?</button>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">�</button>
         <h4 class="modal-title" id="myModalLabel">Please Wait</h4>
       </div>
       <div class="modal-body center-block">
@@ -52,13 +52,11 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-      
-
     </body>
- 
+   <script data-main="js/main" src="js/require.js"></script>
 </html>

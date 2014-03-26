@@ -6,12 +6,12 @@ define(function (require) {
     return Backbone.View.extend({
 	template: _.template(Template),
         initialize: function (options) {
-            //this.App = options.App;
+            this.App = options.App;
             this.currentCollection = options.currentCollection;
-            this.render();
+           
             $(this.el).html(this.template());
-            this.pleaseWaitDiv = $(this.el).find('#pleaseWaitDialog');
-            this.hidePleaseWait();
+            this.render();
+            
         },
         changeModel: function (newModel) {
            
@@ -26,20 +26,17 @@ define(function (require) {
         },
         render: function () {
             //$(this.el).html(this.template());
+        	
+        	$(this.el).find('#btnMap').attr("href", '#metadata/' + this.currentCollection + '/map');
+        	if(this.App.currentEntityCollection && this.App.currentEntityCollection.getSchema().lat && this.App.currentEntityCollection.getSchema().lng){
+        		$(this.el).find('#btnMap').show();
+        	}else{
+        		$(this.el).find('#btnMap').hide();
+        	}
             $(this.el).find('#btnTable').attr("href", '#metadata/' + this.currentCollection + '/table');
-            $(this.el).find('#btnGrid').attr("href", '#metadata/' + this.currentCollection + '/grid');
             $(this.el).find('#btnAdd').attr("href", '#metadata/' + this.currentCollection + '/add');
             return this;
-        },
-        showPleaseWait: function() {
-            this.pleaseWaitDiv.modal();
-        },
-        hidePleaseWait: function () {
-            var delay = 500;
-            var start = new Date().getTime();
-            while (new Date().getTime() < start + delay);
-            this.pleaseWaitDiv.modal('hide');
-        },
+        }
        
     });
 });

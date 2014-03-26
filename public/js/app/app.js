@@ -1,27 +1,16 @@
-define(function (require) {
+define([ 'jquery', 'backbone', 'polyglot', 'app/views/app', 'app/views/header', 'app/views/map', 'app/views/table', 'app/views/entry', 'app/views/log', 'app/views/login', 'app/models/models', 'backbone.basicauth'],
+		function ($, Backbone, Polyglot, AppView, HeaderView, MapView, TableView, EntryView, LogView, LoginView, Models, Basicauth ) {
 
-    var $           = require('jquery'),
-        Backbone    = require('backbone'),
-        AppView     = require('app/views/app'),
-        HeaderView  = require('app/views/header'),
-        TableView   = require('app/views/table'),
-        EntryView   = require('app/views/entry'),
-        GridView    = require('app/views/grid'),
-        LogView    = require('app/views/log'),
-        LoginView   = require('app/views/login');
-        
-    	var models      = require('app/models/models');
 
-var 	Basicauth = require('backbone.basicauth');
 
     return Backbone.Router.extend({
     
         routes: {
-                "entries/reset"                     : "reset",
+  //              "entries/reset"                     : "reset",
                 "entries/sync"                      : "sync",
     
+                "metadata/:collection/map"        : "map",
                 "metadata/:collection/table"        : "table",
-                "metadata/:collection/grid"         : "grid",
                 "metadata/:collection/add"          : "addEntry",
                 "metadata/:collection/:id"          : "editEntry",
                 "metadata/:collection"              : "changeEntity",
@@ -48,7 +37,7 @@ var 	Basicauth = require('backbone.basicauth');
 				localStorage.removeItem('password');
             			this.loginState.set('loginStatus', false);
          			this.loginState.set('login', null);
-            			this.login();
+         			 this.navigate('login', {trigger: true});
 			}
 		});
 
@@ -95,15 +84,21 @@ var 	Basicauth = require('backbone.basicauth');
             this.currentEntityCollection = currentEntityCollection;
             this.currentCollection = id;
             if (this.Views.appView.changeModel(id)) {
-                this.Views.appView.showPleaseWait();
+                this.showPleaseWait();
                 this.currentEntityCollection.fetch({
                     App: this,
                     success: function (model, resp, options) {
                         var App=options.App;
                         App.Views.tableView.changeModel(currentEntityCollection);
-                        //this.Views.gridView.changeModel(currentEntityCollection);
-                        App.addEntry(id);
-                        App.Views.appView.hidePleaseWait();
+                        App.Views.mapView.changeModel(currentEntityCollection);
+                        $('.container .nav li').removeClass('active');
+                        $('#addEntrymenu>a').text('Add Entry');
+                        $('#tablemenu').addClass('active');
+                        $('#maprow').hide();
+                        $('#tablerow').show();
+                        $('#entryrow').hide();
+                        App.addEntry(id, true);
+                        App.hidePleaseWait();
                     }
                 });
             }
@@ -112,6 +107,8 @@ var 	Basicauth = require('backbone.basicauth');
         initialize: function (options) {
             this.Collections = {};
             this.Views = {};
+            this.pleaseWaitDiv = $('#pleaseWaitDialog');
+            this.hidePleaseWait();
         },
     
         editEntry: function (collection, id) {
@@ -119,97 +116,133 @@ var 	Basicauth = require('backbone.basicauth');
                 this.changeEntity(collection);
                 var entry = this.currentEntityCollection.get(id);
                 if (this.currentView) {
-                    this.currentView.undelegateEvents();
+                	this.currentView.close();
+                    //this.currentView.undelegateEvents();
                     $(this.currentView.el).empty();
                 }
                 this.currentView = new EntryView({model: entry, el: "#content", App: this});
+                $('.container .nav li').removeClass('active');
+                $('#addEntrymenu>a').text('Edit Entry');
+                $('#addEntrymenu').addClass('active');
+                $('#maprow').hide();
+                $('#tablerow').hide();
+                $('#entryrow').show();
         },
     
-        addEntry: function (collection) {
+        addEntry: function (collection,nsw) {
                 collection = collection ? collection : "metadata";
                 this.changeEntity(collection);
                 var entry = new this.currentEntityCollection.model();
                 if (this.currentView) {
-                    this.currentView.undelegateEvents();
+                	this.currentView.close();
+                    //this.currentView.undelegateEvents();
                     $(this.currentView.el).empty();
                 }
                 this.currentView = new EntryView({model: entry, el: "#content", App: this});
-        },
-        reset: function(){
-            localStorage.clear();
-            this.currentEntityCollection.reset();
-            this.log('Local storage cleared!');
-        },
-        sync: function(){
-            var collection = this.currentEntityCollection;
-            this.log('Sync started');
-            collection.refreshFromServer({App:this});
+                if(!nsw){
+                $('.container .nav li').removeClass('active');
+                $('#addEntrymenu>a').text('Add Entry');
+                $('#addEntrymenu').addClass('active');
+                $('#maprow').hide();
+                $('#tablerow').hide();
+                $('#entryrow').show();
+                }
         },
         table: function (collection) {
             collection = collection ? collection : "metadata";
             this.changeEntity(collection);
             $('.container .nav li').removeClass('active');
+            $('#addEntrymenu>a').text('Add Entry');
             $('#tablemenu').addClass('active');
+            $('#maprow').hide();
             $('#tablerow').show();
-            $('#gridrow').hide();
+            $('#entryrow').hide();
         },
-        grid: function (collection) {
+        map: function (collection) {
             collection = collection ? collection : "metadata";
             this.changeEntity(collection);
             $('.container .nav li').removeClass('active');
-            $('#gridmenu').addClass('active');
+            $('#addEntrymenu>a').text('Add Entry');
+            $('#mapmenu').addClass('active');
+            $('#maprow').show();
             $('#tablerow').hide();
-            $('#gridrow').show();
+            $('#entryrow').hide();
+        },
+     
+ //       reset: function(){
+ //           localStorage.clear();
+ //           this.currentEntityCollection.reset();
+ //           this.log('Local storage cleared!');
+ //       },
+        sync: function(){
+            var collection = this.currentEntityCollection;
+            this.log('Sync started');
+            collection.refreshFromServer({App:this});
         },
         log: function (msg) {
             this.Collections.Logs.set('message', this.Collections.Logs.get('message') + msg + '\n');
         },
         load: function () {
-    
-                this.Collections.Entries = new models.Entries([],{auth: this.loginState.get('login')});
+        	  if(!Backbone.History.started)
+              {
+                  Backbone.history.start();
+              }
+                this.Collections.Entries = new Models.Entries([],{auth: this.loginState.get('login')});
+                this.showPleaseWait();
                 $.when(this.Collections.Entries.fetch(), this)
                   .done(function (data, App) {
-                        App.Collections.Users = new models.Users([],{auth: App.loginState.get('login')});
+                        App.Collections.Users = new Models.Users([],{auth: App.loginState.get('login')});
                         
-			App.Views.appView = new AppView({ currentCollection: "metadata", el: '#app', App: App });
+                        App.Views.appView = new AppView({ currentCollection: "metadata", el: '#app', App: App });
                         App.Views.tableView = new TableView({ model: App.Collections.Entries, el: "#table", App: App });
-                        //App.Views.gridView = new GridView({ model: App.Collections.Entries, el: "#grid", App: App });
                         App.Views.headerView = new HeaderView({ model: App.Collections.Entries, loginState: App.loginState, el: '.header', App: App });
+                        App.Views.mapView = new MapView({ model: App.Collections.Entries, el: "#map", App: App });
+                        
                         //App.changeEntity(App.Collections.Entries.length>0?App.Collections.Entries.models[0].get('_id'):"metadata");
 
                         if (App.loginState.get('login').isAdmin) {
-                          App.Views.logView = new LogView({ el: "#log", model: App.Collections.Logs, App: App });
-                          App.table();
-                          App.addEntry();
+                          //App.Views.logView = new LogView({ el: "#log", model: App.Collections.Logs, App: App });
+                          //App.table();
+                          //App.addEntry(null,true);
+                        	if(App.loginState.get('login').metadata)
+                        	{
+                        		App.navigate('metadata/'+App.Collections.Entries.findWhere({name: App.loginState.get('login').metadata}).get('_id'), {trigger: true});
+                        	}else{
+                        		App.navigate('metadata/metadata', {trigger: true});
+                        	}
+                        	App.table();
                         }
                         else 
                         {
-                                if (App.Collections.Entries.length ==- 0) {
+                                if (App.Collections.Entries.length == 0) {
                                     App.Collections.Entries.refreshFromServer({
                                     App:App,
                                     success: function () {
-                                      //App.table(App.Collections.Entries.length > 0 ? App.Collections.Entries.models[0].get('_id') : "metadata");
-                                      //App.addEntry(App.Collections.Entries.length > 0 ? App.Collections.Entries.models[0].get('_id') : "metadata");
-                                      //App.changeEntity(App.Collections.Entries.findWhere({name: App.loginState.get('login').metadata}));
-                                      App.table(App.Collections.Entries.findWhere({name: App.loginState.get('login').metadata}).get('_id'));
-                                      App.addEntry(App.Collections.Entries.findWhere({name: App.loginState.get('login').metadata}).get('_id'));
+                                      //App.table(App.Collections.Entries.findWhere({name: App.loginState.get('login').metadata}).get('_id'));
+                                      //App.addEntry(App.Collections.Entries.findWhere({name: App.loginState.get('login').metadata}).get('_id'), true);
+                                      App.navigate('metadata/'+App.Collections.Entries.findWhere({name: App.loginState.get('login').metadata}).get('_id'), {trigger: true});
                                     }
                                     });
                                 } else {
-                                    //App.table(App.Collections.Entries.length > 0 ? App.Collections.Entries.models[0].get('_id') : "metadata");
-                                    //App.addEntry(App.Collections.Entries.length > 0 ? App.Collections.Entries.models[0].get('_id') : "metadata");
-                                    //App.changeEntity(App.Collections.Entries.findWhere({name: App.loginState.get('login').metadata}).id);
-                                    App.table(App.Collections.Entries.findWhere({name: App.loginState.get('login').metadata}).get('_id'));
-                                    App.addEntry(App.Collections.Entries.findWhere({name: App.loginState.get('login').metadata}).get('_id'));
+                                    //App.table(App.Collections.Entries.findWhere({name: App.loginState.get('login').metadata}).get('_id'));
+                                    //App.addEntry(App.Collections.Entries.findWhere({name: App.loginState.get('login').metadata}).get('_id'), true);
+                                	App.navigate('metadata/'+App.Collections.Entries.findWhere({name: App.loginState.get('login').metadata}).get('_id'), {trigger: true});
                                 }
                          
                         }
-                        if(!Backbone.History.started)
-                        {
-                            Backbone.history.start();
-                        }
+                      
+                        App.hidePleaseWait();
                   }, this);
     
+        },
+        showPleaseWait: function() {
+            this.pleaseWaitDiv.modal();
+        },
+        hidePleaseWait: function () {
+            var delay = 500;
+            var start = new Date().getTime();
+            while (new Date().getTime() < start + delay);
+            this.pleaseWaitDiv.modal('hide');
         }
     
     });
