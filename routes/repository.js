@@ -229,7 +229,8 @@ var populateUsers = function() {
         { "owner":"/admin/ExitPoll/", "username": "ExitPollUser1", "password": "ExitPollUser1", "isAdmin": false, "metadata": "ExitPoll", "lastModified": new Date(), "deleted": false },
     
         { "owner":"/admin/", "username": "todo", "password": "todo", "isAdmin": false, "metadata": "Todo", "lastModified": new Date(), "deleted": false },
-        { "owner":"/admin/", "username": "sales", "password": "sales", "isAdmin": false, "metadata": "Sales", "lastModified": new Date(), "deleted": false }
+        { "owner":"/admin/", "username": "sales", "password": "sales", "isAdmin": false, "metadata": "Sales", "lastModified": new Date(), "deleted": false },
+        { "owner":"/admin/", "username": "startupweek", "password": "startupweek", "isAdmin": false, "metadata": "StartUpWeek", "lastModified": new Date(), "deleted": false }
 
     ];
  
