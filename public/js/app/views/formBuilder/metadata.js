@@ -101,9 +101,13 @@ define([
 		for(var entryKey in this.collection.models)
 		{
 			  var entrymodel=this.collection.models[entryKey];
-			  this.value+=JSON.stringify(entrymodel);
+			  var id=entrymodel.get('id');
+			  delete entrymodel.attributes["id"];
+			  this.value+="\""+id+"\":"+JSON.stringify(entrymodel)+", ";
 		}
-    	
+	if(this.value.length>0){
+		this.value=this.value.substr(0,this.value.length-2);
+     }
       $(this.el).html(this.renderForm({id:this.id, label:this.label, placeholder: this.placeholder, value:this.value, disabled: this.disabled}));
      
       
