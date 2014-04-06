@@ -63,7 +63,7 @@ define(function (require) {
                 App.log('Pushing:' + JSON.stringify(modifiedLocalEntry));
     
                 modifiedLocalEntry.attributes.isDirty = null;
-    
+                modifiedLocalEntry.credentials=collection.credentials;
                 Backbone.ajaxSync('update', modifiedLocalEntry, { success: function (newEntry) {
                     modifiedLocalEntry.destroy();
                     if (modifiedLocalEntry.get('deleted') == true) {
@@ -89,7 +89,7 @@ define(function (require) {
     
                     entryToPush.attributes._id = null;
                     entryToPush.attributes.isDirty = null;
-    
+                    entryToPush.credentials=collection.credentials;
                     newLocalEntry.destroy();
                     Backbone.ajaxSync('create', entryToPush, { url: collection.url, success: function (newEntry) {
                         collection.create(newEntry, {add:true});
