@@ -6,7 +6,10 @@
     "dependencies": {
         "express": "3.x",
         "mongodb": "1.1.8",
-        "socket.io": "0.9.16"
+        "socket.io": "0.9.16",
+        "html": "0.0.7",
+        "ejs": "1.0.0",
+        "node-fs": "*"
     },
     "engines": {
         "node": "0.8.4",

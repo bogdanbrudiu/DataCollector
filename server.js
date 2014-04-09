@@ -1,6 +1,8 @@
 var express = require('express'),
 	path = require('path'),
-	http = require('http'), 
+	http = require('http'),
+	ejs = require('ejs'), 
+	fs = require('fs'),
     repository= require('./routes/repository');
    
 
@@ -22,7 +24,8 @@ app.use(function (req, res, next) {
 app.configure(function () {
 	app.set('port', process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 8080);
 	app.set('host', process.env.OPENSHIFT_NODEJS_IP || process.env.IP || '127.0.0.1');//'192.168.1.10');
-
+	//app.set('views', __dirname+'/public');
+	//app.set('view engine', 'ejs');
 
 
 	app.use(express.logger('dev'));  /* 'default', 'short', 'tiny', 'dev' */
@@ -56,7 +59,12 @@ app.get('/logout', auth, function (req, res) {
   delete req.session.authStatus;
   res.send("Done!");
 });   
+app.get('/autologin', auth, function(req, res) {
+	
+    var page_html = ejs.render(fs.readFileSync('public/app.html', 'utf-8'), { username: req.user.username, password: req.user.password });
+    res.send(page_html);
 
+	});
 
 var server= http.createServer(app)
 console.log("Trying to start server at", app.get('host')+ ":" + app.get('port'));

@@ -11,13 +11,17 @@ define(['backbone','underscore','text!tpl/EntryView.html',
             this.App = options.App;
             this.render();
             _.bindAll(this, 'changed');
-            
+            $("#navbar #save").on("click",this,this.save);
+            $("#navbar #delete").on("click",this,this.softDelete);
+          
         },
         close: function(){
         	for(var i=0;i< this.views.length;i++)
         	{
         		this.views[i].close();
         	}
+        	  $("#navbar #save").off("click");
+              $("#navbar #delete").off("click");
       	  this.undelegateEvents();
   		},
         events: {
@@ -43,12 +47,14 @@ $(this.el).html("");
 
 for(var entryKey in this.model.schema)
 {
-var entry=this.model.schema[entryKey];
-entry.id=entryKey;
-var control=new EditorView({model: entry, value:this.model.get(entryKey)});
-this.views.push(control);
-$(this.el).append(control.el);
-control.render();
+	var entry=this.model.schema[entryKey];
+	if(entry.showInEditor==undefined || entry.showInEditor!=false){
+		entry.id=entryKey;
+		var control=new EditorView({model: entry, value:this.model.get(entryKey)});
+		this.views.push(control);
+		$(this.el).append(control.el);
+		control.render();
+	}
 }
  $(this.el).append(this.template());
 
@@ -58,11 +64,13 @@ control.render();
         },
 
 
-        save: function () {
-            if (this.model.isNew()) {
-                var self = this;
-		 if (!this.model.id) {//guid
-		      this.model.id = (((1+Math.random())*0x10000)|0).toString(16).substring(1)+
+        save: function (event ) {
+        	if(event && event.data){that=event.data;}else{that=this;}
+        	
+            if (that.model.isNew()) {
+                var selfEntryView = that;
+		 if (!that.model.id) {//guid
+			 that.model.id = (((1+Math.random())*0x10000)|0).toString(16).substring(1)+
 (((1+Math.random())*0x10000)|0).toString(16).substring(1)+"-"+
 (((1+Math.random())*0x10000)|0).toString(16).substring(1)+"-"+
 (((1+Math.random())*0x10000)|0).toString(16).substring(1)+"-"+
@@ -70,28 +78,42 @@ control.render();
 (((1+Math.random())*0x10000)|0).toString(16).substring(1)+
 (((1+Math.random())*0x10000)|0).toString(16).substring(1)+
 (((1+Math.random())*0x10000)|0).toString(16).substring(1);
-		      this.model.set(this.model.idAttribute, this.model.id);
+			 that.model.set(that.model.idAttribute, that.model.id);
 		    }
-                this.App.currentEntityCollection.create(this.model, {
+		 that.App.currentEntityCollection.create(that.model, {
                     success: function (model) {
-                        self.App.navigate('metadata/' + self.App.currentCollection + '/' + model.get('_id'), false);
+                        //selfEntryView.App.navigate('metadata/' + selfEntryView.App.currentCollection + '/' + model.get('_id'), false);
+                        selfEntryView.App.navigate('metadata/' + selfEntryView.App.currentCollection +'/table', {trigger: true});
                     },
                     error: function (model, response) {
                         alert(response.responseText);
                     }
                 });
             } else {
-                this.model.save();
+            	that.model.save();
+            	that.App.navigate('metadata/' + that.App.currentCollection +'/table', {trigger: true});
             }
-            this.render();
+            that.render();
             return false;
         },
+        softDelete: function (event ) {
+        	if(event && event.data){that=event.data;}else{that=this;}
+        	
+        	that.model.set({ deleted: true });
+        	that.model.save();
+        	that.model.trigger('softdelete');
+        	that.App.navigate('metadata/' + that.App.currentCollection+'/table', {trigger: true});
+            return false;
+        },
+        
+        
+        
         changed: function (event) {
             var changed = event.currentTarget;
             var value = $(event.currentTarget).val();
             var obj = {};
             /*var id=changed.id.replace('entrydetails-', '').split('-');*/
-	    var id=changed.id.split('-');
+            var id=changed.id.split('-');
             if(id.length>1)
             {
                 id=id.slice(0,id.length-1);
@@ -99,13 +121,8 @@ control.render();
             obj[id] = value;
             this.model.set(obj);
             return true;
-        },
-        softDelete: function () {
-            this.model.set({ deleted: true });
-            this.model.save();
-            this.model.trigger('softdelete');
-            return false;
         }
+      
     
     });
 });

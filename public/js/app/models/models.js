@@ -132,10 +132,10 @@ define(function (require) {
         },
     
         schema: {
-            _id:        { type: 'Text', editorAttrs: { disabled: true } },
+            _id:        { type: 'Text', editorAttrs: { disabled: true }, showInEditor:false },
             name:    { type: 'Text', validators: ['required'], showInTable:true },
             schema: { type: 'Metadata' },
-            lastModified:   { type: 'Text', editorAttrs: { disabled: true } }
+            lastModified:   { type: 'Text', editorAttrs: { disabled: true }, showInEditor:false }
         },
         save: function (attrs, options) {
             options || (options = {});
@@ -206,13 +206,13 @@ define(function (require) {
             isDirty: false
         },
         schema: {
-            _id: { type: 'Text', editorAttrs: { disabled: true } },
-            owner: { type: 'Text', validators: ['required'], editorAttrs: { disabled: true } },
+            _id: { type: 'Text', editorAttrs: { disabled: true }, showInEditor:false },
+            owner: { type: 'Text', validators: ['required'], editorAttrs: { disabled: true }, showInEditor:false },
             username: { type: 'Text', validators: ['required'], showInTable: true },
             password: { type: 'Text', validators: ['required'] },
             metadata: { type: 'Text', validators: ['required'], showInTable: true },
             isAdmin: { type: 'Checkbox', showInTable: true },
-            lastModified: { type: 'Text', editorAttrs: { disabled: true } }
+            lastModified: { type: 'Text', editorAttrs: { disabled: true }, showInEditor:false }
         },
         save: function (attrs, options) {
             options || (options = {});

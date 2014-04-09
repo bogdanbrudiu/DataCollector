@@ -125,30 +125,33 @@ define([
 	      for(var entryKey in self.collection.models)
 	      {
 	    	  var entrymodel=self.collection.models[entryKey];
-	    	  var entry={};
-	    	  entry.id=entrymodel.id;
-	    	  entry.type=entrymodel.get('type');
-	    	  entry.label=entrymodel.get('label') || entrymodel.id;
-	    	  entry.placeholder=entrymodel.get('placeholder') || entrymodel.id;
-	    	  entry.disabled=entrymodel.get('editorAttrs') && entrymodel.get('editorAttrs').disabled;
-	    	  entry.options=entrymodel.get('options') || [];
 	    	  
-		      var control=new EditorView({model: entry, value:''});
-		      
-		      control.$el.on('click',$.proxy(function(e){
-		    	  self.selectedItem=this.model;
-		    	  self.refreshMenu();
-		    	  },control));
-		      
-		      control.$el.addClass("component");
-		  /*    control.$el.attr('data-title', 'Edit Control');
-		      control.$el.attr('data-trigger', 'manual');
-		      control.$el.attr('data-placement', 'right');
-		      control.$el.attr('data-html', true);
-		      control.$el.attr('data-content',  _.template(PopOverTemplate));*/
-		      self.views.push(control);
-		      self.$content.append(control.el);
-		      control.render();
+	    		if(entrymodel.showInEditor==undefined || entrymodel.showInEditor!=false){
+			    	  var entry={};
+			    	  entry.id=entrymodel.id;
+			    	  entry.type=entrymodel.get('type');
+			    	  entry.label=entrymodel.get('label') || entrymodel.id;
+			    	  entry.placeholder=entrymodel.get('placeholder') || entrymodel.id;
+			    	  entry.disabled=entrymodel.get('editorAttrs') && entrymodel.get('editorAttrs').disabled;
+			    	  entry.options=entrymodel.get('options') || [];
+			    	  
+				      var control=new EditorView({model: entry, value:''});
+				      
+				      control.$el.on('click',$.proxy(function(e){
+				    	  self.selectedItem=this.model;
+				    	  self.refreshMenu();
+				    	  },control));
+				      
+				      control.$el.addClass("component");
+				  /*    control.$el.attr('data-title', 'Edit Control');
+				      control.$el.attr('data-trigger', 'manual');
+				      control.$el.attr('data-placement', 'right');
+				      control.$el.attr('data-html', true);
+				      control.$el.attr('data-content',  _.template(PopOverTemplate));*/
+				      self.views.push(control);
+				      self.$content.append(control.el);
+				      control.render();
+	    		}
 	      }
 	      
 	  /*

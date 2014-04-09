@@ -13,7 +13,7 @@ define(function (require) {
 		this.placeholder=this.model.placeholder || this.id;
 		this.value=this.model.value || options.value;
 		this.disabled=this.model.editorAttrs && this.model.editorAttrs.disabled;
-    	this.options=this.model.options;
+    	this.options=this.model.options || [true, false];
 
         },
     

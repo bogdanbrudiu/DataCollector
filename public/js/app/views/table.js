@@ -18,6 +18,7 @@ define(function (require) {
             this.listenTo(this.model, 'change', this.render);
             this.listenTo(this.model, 'destroy', this.destroyHandler);
             this.listenTo(this.model, 'softdelete', this.softdeleteHandler);
+
         },
     
         render: function () {

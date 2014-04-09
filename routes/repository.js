@@ -249,7 +249,7 @@ var populateMetadata = function() {
     "type": "Text",\
     "editorAttrs": {\
       "disabled": true\
-}\
+}, "showInEditor":false\
     },\
     "TipVanzareVoce": {\
         "title": "Tip Vanzare Voce",\
@@ -717,11 +717,11 @@ var populateMetadata = function() {
 	"owner":"/admin/", 
         "name": "ed1", "schema": '\
 {\
-    "_id":{"type":"Text","editorAttrs":{"disabled":true}},\
+    "_id":{"type":"Text","editorAttrs":{"disabled":true}, "showInEditor":false},\
     "col1":{"type":"Text","validators":["required"], "showInTable":"true"},\
     "col2":{"type":"Text","validators":["required"], "showInTable":"true"},\
     "col3":{"type":"Text","validators":["required"], "showInTable":"true"},\
-    "lastModified":{"type":"Text","editorAttrs":{"disabled":true}}\
+    "lastModified":{"type":"Text","editorAttrs":{"disabled":true}, "showInEditor":false}\
 }', "lastModified": new Date(), "deleted": false
         },
         
@@ -731,7 +731,7 @@ var populateMetadata = function() {
 	"owner":"/admin/ExitPoll/", 
         "name": "ExitPoll", "schema": '\
 {\
-    "_id":{"type":"Text","editorAttrs":{"disabled":true}},\
+    "_id":{"type":"Text","editorAttrs":{"disabled":true}, "showInEditor":false},\
     "Sex":{ "type": "Radio",\
         "options": [\
         "Masculin",\
@@ -779,7 +779,7 @@ var populateMetadata = function() {
         "Varianta 3"\
       ]\
       ,"validators":["required"], "showInTable":"true"},\
-    "lastModified":{"type":"Text","editorAttrs":{"disabled":true}}\
+    "lastModified":{"type":"Text","editorAttrs":{"disabled":true}, "showInEditor":false}\
 }', "lastModified": new Date(), "deleted": false
          },
          
@@ -788,11 +788,11 @@ var populateMetadata = function() {
         		"owner":"/admin/", 
         		"name": "Todo", "schema": '\
         	{\
-        	    "_id":{"type":"Text","editorAttrs":{"disabled":true}},\
+        	    "_id":{"type":"Text","editorAttrs":{"disabled":true}, "showInEditor":false},\
         	    "Task":{"type":"Text","validators":["required"], "showInTable":"true"},\
         	    "Cand":{"type":"Text","validators":["required"], "showInTable":"true"},\
         	    "Urgenta":{"type":"Text","validators":["required"], "showInTable":"true"},\
-        	    "lastModified":{"type":"Text","editorAttrs":{"disabled":true}}\
+        	    "lastModified":{"type":"Text","editorAttrs":{"disabled":true}, "showInEditor":false}\
         	}', "lastModified": new Date(), "deleted": false
         	        }
          ,
@@ -802,7 +802,7 @@ var populateMetadata = function() {
          		"owner":"/admin/", 
          		"name": "Sales", "schema": '\
          	{\
-         	    "_id":{"type":"Text","editorAttrs":{"disabled":true}},\
+         	    "_id":{"type":"Text","editorAttrs":{"disabled":true}, "showInEditor":false},\
          		"lat":{"type":"Text", "showInTable":"false"},\
          		"lng":{"type":"Text", "showInTable":"false"},\
          		"label":{"type":"Text", "showInTable":"false"},\
@@ -810,7 +810,7 @@ var populateMetadata = function() {
          	    "Status":{"type":"Text","validators":["required"], "showInTable":"true"},\
          	    "Req":{"type":"Text","validators":["required"], "showInTable":"false"},\
          		"FollowUp":{"type":"Text","validators":["required"], "showInTable":"false"},\
-         	    "lastModified":{"type":"Text","editorAttrs":{"disabled":true}}\
+         	    "lastModified":{"type":"Text","editorAttrs":{"disabled":true}, "showInEditor":false}\
          	}', "lastModified": new Date(), "deleted": false
          	        }
     ];

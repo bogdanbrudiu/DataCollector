@@ -16,6 +16,8 @@ define(function (require) {
             //this.listenTo(this.model, 'reset', this.render);
             this.listenTo(this.model, 'change', this.render);
             this.listenTo(this.model, 'add', this.render);
+            
+            
             var self = this;
             this.App.refreshIntervalId = setInterval(function(){
                 $(self.el).find('#syncimage').removeClass("btn-warning");

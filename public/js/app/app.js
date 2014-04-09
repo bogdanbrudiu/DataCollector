@@ -127,6 +127,9 @@ define([ 'jquery', 'backbone', 'polyglot', 'app/views/app', 'app/views/header', 
                 $('#maprow').hide();
                 $('#tablerow').hide();
                 $('#entryrow').show();
+                $("#navbar #save").show();
+                $("#navbar #delete").show();
+
         },
     
         addEntry: function (collection,nsw) {
@@ -146,7 +149,10 @@ define([ 'jquery', 'backbone', 'polyglot', 'app/views/app', 'app/views/header', 
                 $('#maprow').hide();
                 $('#tablerow').hide();
                 $('#entryrow').show();
-                }
+                
+                $("#navbar #save").show();
+
+            }
         },
         table: function (collection) {
             collection = collection ? collection : "metadata";
@@ -157,6 +163,10 @@ define([ 'jquery', 'backbone', 'polyglot', 'app/views/app', 'app/views/header', 
             $('#maprow').hide();
             $('#tablerow').show();
             $('#entryrow').hide();
+            
+            $("#navbar #save").hide();
+            $("#navbar #delete").hide();
+
         },
         map: function (collection) {
             collection = collection ? collection : "metadata";
@@ -167,6 +177,9 @@ define([ 'jquery', 'backbone', 'polyglot', 'app/views/app', 'app/views/header', 
             $('#maprow').show();
             $('#tablerow').hide();
             $('#entryrow').hide();
+            
+            $("#navbar .save").hide();
+            $("#navbar .delete").hide();
         },
      
  //       reset: function(){

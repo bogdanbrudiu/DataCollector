@@ -57,12 +57,29 @@ require([ 'jquery', 'bootstrap', 'backbone',  'app/app', 'app/models/models'], f
     
         if (!App.loginState.loginStatus) 
         {
-            if(window.localStorage.email !== undefined && 
+            if((window.localStorage.email !== undefined && 
                 window.localStorage.password !== undefined &&
                 window.localStorage.email !== "" && 
-                window.localStorage.password !== "")
+                window.localStorage.password !== "") ||(
+                		 username!==undefined && username!='<%= username %>' && username!='' &&
+                         password!==undefined && password!='<%= password %>' 
+                        	 )
+               )
             {
-                App.authenticate(window.localStorage.email, window.localStorage.password, function (data) 
+            	
+            	if(username!==undefined && username!='<%= username %>' && username!='' &&
+                        password!==undefined && password!='<%= password %>' ){
+            		//autologin
+            		myusername=username;
+            		mypassword=password;
+            	}else{
+            		myusername=window.localStorage.email;
+            		mypassword=window.localStorage.password;
+            	}
+            		
+            	
+            	
+                App.authenticate(myusername, mypassword, function (data) 
                     {
                         App.log('Login request details: ' + JSON.stringify(data));
                         if (data.error) 
@@ -77,6 +94,7 @@ require([ 'jquery', 'bootstrap', 'backbone',  'app/app', 'app/models/models'], f
                             App.load();
                         }
                     });
+            	
             }
             else
             {
