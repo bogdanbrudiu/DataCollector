@@ -3,14 +3,14 @@
         <div class="panel-heading">
             <h4 class="panel-title">
                 <a id="collapseLogButton" class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseLogButton">
-                    Log:
+                    <%= polyglot.t('Log') %>:
                 </a>
             </h4>
         </div>
         <div id="collapseLog" class="panel-collapse <%= model.state %>">
             <div class="panel-body">
                 <textarea id="log" style="width:99%" rows="5"></textarea>
-                <a id="clearLog" href="#clearLog" class="btn"><i class="glyphicon  glyphicon-remove"></i> Clear</a>
+                <a id="clearLog" href="#clearLog" class="btn"><i class="glyphicon  glyphicon-remove"></i><%= polyglot.t('Clear') %> </a>
             </div>
         </div>
     </div>

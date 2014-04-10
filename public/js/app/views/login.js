@@ -11,9 +11,22 @@ define(function (require) {
         },
     
         events: {
-            "click #loginButton": "login"
+            "click #ro": "ro",
+            "click #en": "en",
+            "click #loginButton": "login",
+            "click #registerButton": "register"
         },
-    
+        ro:function(){
+        	localStorage.setItem('locale','ro-RO')
+        	},
+        en:function(){
+        	localStorage.setItem('locale','en-US')
+        	},
+        
+        register: function () {
+        	this.App.navigate('register', {trigger: true});
+        	return false;
+        },
         render: function () {
             $(this.el).html(this.template());
             return this;

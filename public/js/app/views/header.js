@@ -54,9 +54,9 @@ define(function (require) {
     
     
             if (this.loginState.get('loginStatus')) {
-                $(this.el).find('#btnlogin').html('<a href="#logout" ><i class="glyphicon  glyphicon-off"></i> Logout</a>');
+                $(this.el).find('#btnlogin').html('<a href="#logout" ><i class="glyphicon  glyphicon-off"></i> '+polyglot.t('Logout')+'</a>');
             }else{
-                $(this.el).find('#btnlogin').html('<a href="#logout" ><i class="glyphicon  glyphicon-off"></i> Login</a>');
+                $(this.el).find('#btnlogin').html('<a href="#logout" ><i class="glyphicon  glyphicon-off"></i> '+polyglot.t('Login')+'</a>');
             }
             if (this.loginState.get('loginStatus')) {
                 $(this.el).find('#navbar #btnmetadata').remove();
@@ -64,10 +64,10 @@ define(function (require) {
                 $(this.el).find('#collectionsdd').remove();
                 if (this.loginState.get('login') !== null && this.loginState.get('login').isAdmin) {
                 $(this.el).find('#navbar').prepend('\
-                    <li id="btnmetadata"><a href="#metadata/metadata"><i class="glyphicon  glyphicon-edit"></i> Metadata</a></li>\
-                    <li id="btnusers"><a href="#metadata/users"><i class="glyphicon  glyphicon-user"></i> Users</a></li>\
+                    <li id="btnmetadata"><a href="#metadata/metadata"><i class="glyphicon  glyphicon-edit"></i> '+polyglot.t('Metadata')+' </a></li>\
+                    <li id="btnusers"><a href="#metadata/users"><i class="glyphicon  glyphicon-user"></i> '+polyglot.t('Users')+' </a></li>\
                     <li class="dropdown" id="collectionsdd">\
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Collections <b class="caret"></b></a>\
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-list"></span> '+polyglot.t('Collections')+' <b class="caret"></b></a>\
                         <ul class="dropdown-menu" id="collections">\
                         </ul>\
                     </li>\

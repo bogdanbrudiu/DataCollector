@@ -15,7 +15,27 @@ define([
 	
 	
   return Backbone.View.extend({
-	  
+	  events: {
+          "click #itemup": "itemup",
+		"click #itemdown": "itemdown"
+      },
+      itemup: function(){
+    	  if(this.selectedItem!=null){
+    		  index1=this.collection.indexOf(this.collection.get(this.selectedItem));
+    		  index2=index1-1;
+    		  this.collection.models[index1] = this.collection.models.splice(index2, 1, this.collection.models[index1])[0];
+    		  this.render();
+    	  }
+      },
+      itemdown: function(){
+    	  if(this.selectedItem!=null){
+    		  index1=this.collection.indexOf(this.collection.get(this.selectedItem));
+    		  index2=index1+1;
+    		  this.collection.models[index1] = this.collection.models.splice(index2, 1, this.collection.models[index1])[0];
+    		  this.render();
+    	  }
+      },
+      
 	  initialize: function(options){
 		  
 		  this.selectedItem=null;
@@ -102,8 +122,9 @@ define([
 		{
 			  var entrymodel=this.collection.models[entryKey];
 			  var id=entrymodel.get('id');
-			  delete entrymodel.attributes["id"];
-			  this.value+="\""+id+"\":"+JSON.stringify(entrymodel)+", ";
+			  newentrymodel = entrymodel.clone();
+			  delete newentrymodel.attributes["id"];
+			  this.value+="\""+id+"\":"+JSON.stringify(newentrymodel)+", ";
 		}
 	if(this.value.length>0){
 		this.value=this.value.substr(0,this.value.length-2);
@@ -136,12 +157,16 @@ define([
 			    	  entry.options=entrymodel.get('options') || [];
 			    	  
 				      var control=new EditorView({model: entry, value:''});
-				      
 				      control.$el.on('click',$.proxy(function(e){
+				    	  self.$content.children().removeClass('bg-info');
+				    	  this.$el.addClass('bg-info');
 				    	  self.selectedItem=this.model;
 				    	  self.refreshMenu();
 				    	  },control));
-				      
+				      if(self.selectedItem && self.selectedItem.id==control.model.id){
+				    	  control.$el.addClass("bg-info");
+
+				      }
 				      control.$el.addClass("component");
 				  /*    control.$el.attr('data-title', 'Edit Control');
 				      control.$el.attr('data-trigger', 'manual');

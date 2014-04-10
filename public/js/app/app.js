@@ -1,5 +1,5 @@
-define([ 'jquery', 'backbone', 'polyglot', 'app/views/app', 'app/views/header', 'app/views/map', 'app/views/table', 'app/views/entry', 'app/views/log', 'app/views/login', 'app/models/models', 'backbone.basicauth'],
-		function ($, Backbone, Polyglot, AppView, HeaderView, MapView, TableView, EntryView, LogView, LoginView, Models, Basicauth ) {
+define([ 'jquery', 'backbone', 'polyglot', 'app/views/app', 'app/views/header', 'app/views/map', 'app/views/table', 'app/views/entry', 'app/views/log', 'app/views/login', 'app/views/register', 'app/models/models', 'backbone.basicauth'],
+		function ($, Backbone, Polyglot, AppView, HeaderView, MapView, TableView, EntryView, LogView, LoginView, RegisterView, Models, Basicauth ) {
 
 
 
@@ -14,12 +14,16 @@ define([ 'jquery', 'backbone', 'polyglot', 'app/views/app', 'app/views/header', 
                 "metadata/:collection/add"          : "addEntry",
                 "metadata/:collection/:id"          : "editEntry",
                 "metadata/:collection"              : "changeEntity",
+                "register"                             : "register",
                 "login"                             : "login",
                 "logout"                             : "logout"
     
         },
         login: function() {
             $('#app').html(new LoginView({App: this}).render().el);
+        },
+        register: function() {
+            $('#app').html(new RegisterView({App: this}).render().el);
         },
         logout: function() {
 
@@ -32,6 +36,7 @@ define([ 'jquery', 'backbone', 'polyglot', 'app/views/app', 'app/views/header', 
     				password: this.loginState.get('login').password
     			}),
 			success: function (data) {
+				Backbone.history.stop();
 				clearInterval(this.refreshIntervalId);
 				localStorage.removeItem('email');
 				localStorage.removeItem('password');
@@ -92,7 +97,7 @@ define([ 'jquery', 'backbone', 'polyglot', 'app/views/app', 'app/views/header', 
                         App.Views.tableView.changeModel(currentEntityCollection);
                         App.Views.mapView.changeModel(currentEntityCollection);
                         $('.container .nav li').removeClass('active');
-                        $('#addEntrymenu>a').text('Add Entry');
+                        $('#addEntrymenu>a').html('<span class="glyphicon glyphicon-plus"></span> '+polyglot.t('Add_Entry'));
                         $('#tablemenu').addClass('active');
                         $('#maprow').hide();
                         $('#tablerow').show();
@@ -122,7 +127,7 @@ define([ 'jquery', 'backbone', 'polyglot', 'app/views/app', 'app/views/header', 
                 }
                 this.currentView = new EntryView({model: entry, el: "#content", App: this});
                 $('.container .nav li').removeClass('active');
-                $('#addEntrymenu>a').text('Edit Entry');
+                $('#addEntrymenu>a').html('<span class="glyphicon glyphicon-pencil"></span> '+polyglot.t('Edit_Entry'));
                 $('#addEntrymenu').addClass('active');
                 $('#maprow').hide();
                 $('#tablerow').hide();
@@ -144,7 +149,7 @@ define([ 'jquery', 'backbone', 'polyglot', 'app/views/app', 'app/views/header', 
                 this.currentView = new EntryView({model: entry, el: "#content", App: this});
                 if(!nsw){
                 $('.container .nav li').removeClass('active');
-                $('#addEntrymenu>a').text('Add Entry');
+                $('#addEntrymenu>a').html('<span class="glyphicon glyphicon-plus"></span> '+polyglot.t('Add_Entry'));
                 $('#addEntrymenu').addClass('active');
                 $('#maprow').hide();
                 $('#tablerow').hide();
@@ -158,7 +163,7 @@ define([ 'jquery', 'backbone', 'polyglot', 'app/views/app', 'app/views/header', 
             collection = collection ? collection : "metadata";
             this.changeEntity(collection);
             $('.container .nav li').removeClass('active');
-            $('#addEntrymenu>a').text('Add Entry');
+            $('#addEntrymenu>a').html('<span class="glyphicon glyphicon-plus"></span> '+polyglot.t('Add_Entry'));
             $('#tablemenu').addClass('active');
             $('#maprow').hide();
             $('#tablerow').show();
@@ -172,7 +177,7 @@ define([ 'jquery', 'backbone', 'polyglot', 'app/views/app', 'app/views/header', 
             collection = collection ? collection : "metadata";
             this.changeEntity(collection);
             $('.container .nav li').removeClass('active');
-            $('#addEntrymenu>a').text('Add Entry');
+            $('#addEntrymenu>a').html('<span class="glyphicon glyphicon-plus"></span> '+polyglot.t('Add_Entry'));
             $('#mapmenu').addClass('active');
             $('#maprow').show();
             $('#tablerow').hide();
@@ -196,10 +201,7 @@ define([ 'jquery', 'backbone', 'polyglot', 'app/views/app', 'app/views/header', 
             this.Collections.Logs.set('message', this.Collections.Logs.get('message') + msg + '\n');
         },
         load: function () {
-        	  if(!Backbone.History.started)
-              {
-                  Backbone.history.start();
-              }
+        	 
                 this.Collections.Entries = new Models.Entries([],{auth: this.loginState.get('login')});
                 this.showPleaseWait();
                 $.when(this.Collections.Entries.fetch(), this)

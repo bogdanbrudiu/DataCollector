@@ -3,6 +3,7 @@ var express = require('express'),
 	http = require('http'),
 	ejs = require('ejs'), 
 	fs = require('fs'),
+	nodemailer = require('nodemailer'),
     repository= require('./routes/repository');
    
 
@@ -65,6 +66,31 @@ app.get('/autologin', auth, function(req, res) {
     res.send(page_html);
 
 	});
+
+
+app.post('/register',function (req, res) {
+	var smtpTransport = nodemailer.createTransport("SMTP",{
+			host : "mail.data-collector.co",
+		   auth: {
+		       user: "office@data-collector.co",
+		       pass: "officeP@44"
+		   }
+		});
+	
+	smtpTransport.sendMail({
+		   from: "office@data-collector.co", // sender address
+		   to: "bogdan.brudiu@xceed.ro", // comma separated list of receivers
+		   subject: "Data-Collector.co register", // Subject line
+		   text: req.body.email // plaintext body
+		}, function(error, response){
+		   if(error){
+		       console.log(error);
+		   }else{
+		       console.log("Message sent: " + response.message);
+		   }
+		});
+	 res.send(true);
+});
 
 var server= http.createServer(app)
 console.log("Trying to start server at", app.get('host')+ ":" + app.get('port'));

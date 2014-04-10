@@ -1,0 +1,30 @@
+{
+	  "Title": "Offine DataCollector",
+	  "Add_Entry": "Adaugă Intrare",
+	  "Edit_Entry": "Editează Intrare",
+	  "Table": "Tabel",
+	   "Map": "Hartă",
+
+		  "Save": "Salvează",
+		   "Delete": "Şterge",
+		   "ResetLocalDatabase": "Şterge baza de date",
+		   "SyncWithServer": "Sincronizează",	   
+		   "Log": "Jurnal",
+		   "Clear": "Goleşte",	
+		   "Metadata": "Formulare",
+		   "Users": "Utilizatori",
+		   "Collections": "Date",
+		    "Logout": "Deconectează-te",
+		    
+		    "EditForm": "Editează Formularul",
+		   
+   "Login": "Autentifică-te",
+   "Register": "Înregistrează-te",
+   "RememberMe": "Ţine minte",
+   "Email": "Email",
+   "Password": "Parola",
+   "ReadMoreAboutUs": "Află mai multe",	
+
+	   
+	      "RequestAccount": "Solicită un cont"	
+}

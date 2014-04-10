@@ -42,15 +42,23 @@ require.config({
 
 require([ 'jquery', 'bootstrap', 'backbone',  'app/app', 'app/models/models'], function ($, Bootstrap, Backbone, AppRouter, models) {
 
-	 var locale = localStorage.getItem('locale') || 'en';
+	
+	
+	
+	
+	 var locale = localStorage.getItem('locale') || navigator.language || navigator.userLanguage || 'en-US';
 	  // Gets the language file.
-	  $.getJSON('locales/en.json',function(data) {
+	  $.getJSON('locales/'+locale+'.json',function(data) {
 	    // Instantiates polyglot with phrases.
 	    window.polyglot = new Polyglot({phrases: data});
 
 		
 		
         var App = new AppRouter();
+        if(!Backbone.History.started)
+        {
+            Backbone.history.start();
+        }
         window.location.hash='';
         App.loginState = new models.Login();
         App.Collections.Logs = new models.Logs();

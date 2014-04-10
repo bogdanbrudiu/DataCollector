@@ -9,7 +9,8 @@
         "socket.io": "0.9.16",
         "html": "0.0.7",
         "ejs": "1.0.0",
-        "node-fs": "*"
+        "node-fs": "*",
+        "nodemailer": "0.3.29"
     },
     "engines": {
         "node": "0.8.4",

@@ -1,0 +1,28 @@
+{
+  "Title": "Offine DataCollector",
+  "Add_Entry": "Add Entry",
+  "Edit_Entry": "Edit Entry",
+  "Table": "Table",
+   "Map": "Map",
+   
+  "Save": "Save",
+  "Delete": "Delete",
+  "ResetLocalDatabase": "ResetLocalDatabase",
+  "SyncWithServer": "SyncWithServer",	   
+  "Log": "Log",
+  "Clear": "Clear",	
+  "Metadata": "Forms",
+  "Users": "Users",
+  "Collections": "Data",
+   "Logout": "Logout",
+   
+   "EditForm": "Edit Form",
+   
+   "Login": "Login",
+   "Register": "Register",
+   "RememberMe": "Remember me",
+   "Email": "Email",
+   "Password": "Password",
+   "ReadMoreAboutUs": "Read more about us"	,	
+   "RequestAccount": "Request an account"			   
+}
