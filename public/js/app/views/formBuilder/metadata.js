@@ -130,7 +130,7 @@ define([
     		  this.collection.models[this.selectedIndex].set("label",$('#controlLabel').val());
     		  this.collection.models[this.selectedIndex].set("placeholder",$('#controlPlaceholder').val());
     		  this.collection.models[this.selectedIndex].set("showInTable",$('#controlShowInTable').is(':checked'));
-    		  this.collection.models[this.selectedIndex].set("options",$('#controlOptions').val());
+    		  this.collection.models[this.selectedIndex].set("options",$('#controlOptions').val().split(","));
     		  this.selectedItem= this.collection.models[this.selectedIndex].attributes;
     		 $('#itemeditmodal').modal('hide');
     		 this.render();
