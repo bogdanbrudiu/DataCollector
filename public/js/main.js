@@ -55,11 +55,12 @@ require([ 'jquery', 'bootstrap', 'backbone',  'app/app', 'app/models/models'], f
 		
 		
         var App = new AppRouter();
+        window.location.hash='';
         if(!Backbone.History.started)
         {
             Backbone.history.start();
         }
-        window.location.hash='';
+       
         App.loginState = new models.Login();
         App.Collections.Logs = new models.Logs();
     

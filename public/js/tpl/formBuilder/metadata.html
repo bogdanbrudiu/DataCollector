@@ -71,4 +71,23 @@
 disabled="disabled"
 <% } %>
 ><%= value %></textarea>
+
+
+<div class="modal" id="itemeditmodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabelEdit" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabelEdit"><%= polyglot.t('EditComponent') %></h4>
+      </div>
+      <div class="modal-body center-block">
+     
+      </div>
+      <div class="modal-footer">
+	<a href='#' class='btn btn-primary' id="saveitem"><%= polyglot.t('Save') %></a>
+	<a href='#' class='btn'  id="closeitem"><%= polyglot.t('Close') %></a>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
    

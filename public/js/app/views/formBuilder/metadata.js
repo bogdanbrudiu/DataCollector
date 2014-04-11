@@ -2,12 +2,12 @@ define([
        "jquery", "underscore", "backbone"
        , "helper/events" 	
       , "text!tpl/formBuilder/metadata.html"
-    //  , "text!tpl/formBuilder/popover.html"
+      , "text!tpl/formBuilder/popover.html"
       , "text!tpl/formBuilder/menu.html"
       
 ], function(
   $, _, Backbone, Events
-  , Template, //PopOverTemplate,
+  , Template, PopOverTemplate,
    MenuTemplate
 ){
 	
@@ -17,7 +17,42 @@ define([
   return Backbone.View.extend({
 	  events: {
           "click #itemup": "itemup",
-		"click #itemdown": "itemdown"
+		"click #itemdown": "itemdown",
+		"click #itemdelete": "itemdelete",
+		"click #itemedit": "itemedit",
+		"click #saveitem": "saveitem",
+		"click #closeitem": "closeitem",
+		"click #addTextBox": "addTextBox",
+		"click #addTextArea": "addTextBox",
+		"click #addRadio": "addRadio",
+		"click #addCheckbox": "addCheckbox",
+		"click #addSelect": "addSelect",
+		
+		
+      },
+      addcomponent: function(type){
+    	  index=0;
+    	  id=type+this.collection.length;
+    	  while(this.collection.get(id) !=null)
+    	  {
+    		  id=id+'_'+index++;
+    	  }
+    	  return {type:type ,id:id, label:id, placeholder: id, value:'', disabled: false};
+      },
+      addTextBox:function(){
+    	  this.collection.add(this.addcomponent('textbox'));
+      },
+      addTextArea:function(){
+    	  this.collection.add(this.addcomponent('textarea'));
+      },
+      addRadio:function(){
+    	  this.collection.add(this.addcomponent('radio'));
+      },
+      addCheckbox:function(){
+    	  this.collection.add(this.addcomponent('checkbox'));
+      },
+      addSelect:function(){
+    	  this.collection.add(this.addcomponent('select'));
       },
       itemup: function(){
     	  if(this.selectedItem!=null){
@@ -35,7 +70,22 @@ define([
     		  this.render();
     	  }
       },
-      
+      itemdelete: function(){
+    	  if(this.selectedItem!=null){
+    		  this.collection.remove(this.collection.get(this.selectedItem));
+    		  //this.render();
+    	  }
+      },
+      itemedit: function(){
+    	  if(this.selectedItem!=null){
+    		 $('#itemeditmodal').modal('show');
+    	  }
+      },
+      closeitem: function(){
+    	
+    		 $('#itemeditmodal').modal('hide');
+
+      },
 	  initialize: function(options){
 		  
 		  this.selectedItem=null;
@@ -50,6 +100,8 @@ define([
 	      this.collection.on("remove", this.render, this);
 	      this.collection.on("change", this.render, this);
 		  
+	      
+	   
 		  /*
 		  if(!this.loaded){
 		      this.collection.on("add", this.render, this);
@@ -65,6 +117,14 @@ define([
 	      */
       this.renderForm = _.template(Template);
       this.views=[];
+      
+      
+      if(this.collection.get('_id')==null){
+    	  this.collection.add({type:"Text" ,id:"_id", value:'', editorAttrs:{disabled: true}, showInEditor:false});
+      }
+      if(this.collection.get('lastModified')==null){
+    	  this.collection.add({type:"Text" ,id:"lastModified", value:'', editorAttrs:{disabled: true}, showInEditor:false});
+      }
       
     },
   close: function(){
@@ -119,12 +179,14 @@ define([
     	$(this.el).empty();
 		this.value='';
 		for(var entryKey in this.collection.models)
-		{
-			  var entrymodel=this.collection.models[entryKey];
-			  var id=entrymodel.get('id');
+		{ 
+			var entrymodel=this.collection.models[entryKey];
+			var id=entrymodel.get('id');
+			//if(id!='_id' && id!='lastModified'){
 			  newentrymodel = entrymodel.clone();
 			  delete newentrymodel.attributes["id"];
 			  this.value+="\""+id+"\":"+JSON.stringify(newentrymodel)+", ";
+			//}
 		}
 	if(this.value.length>0){
 		this.value=this.value.substr(0,this.value.length-2);
@@ -133,13 +195,16 @@ define([
      
       
       this.$content=$('#metadatacontent');
+      this.$content.html("");
+      this.$content.append("<div class='component'>Form</div>");
+      this.$content.append( _.template(MenuTemplate));
       //this.$repository=$('#repository');
       var self=this;
 	 // require(["app/views/formBuilder/draggableSnipplet"], function(EditorView) {
       require(["app/views/formBuilder/editor"], function(EditorView) {
 		  
-		  self.$content.append("<div class='component'>Form</div>");
-		  self.$content.append( _.template(MenuTemplate));
+		
+		  
 		  self.refreshMenu();
 
 		  
@@ -147,7 +212,8 @@ define([
 	      {
 	    	  var entrymodel=self.collection.models[entryKey];
 	    	  
-	    		if(entrymodel.showInEditor==undefined || entrymodel.showInEditor!=false){
+	    		if((entrymodel.showInEditor==undefined || entrymodel.showInEditor!=false)
+	    				&& entrymodel.id!='_id' && entrymodel.id!='lastModified'){
 			    	  var entry={};
 			    	  entry.id=entrymodel.id;
 			    	  entry.type=entrymodel.get('type');

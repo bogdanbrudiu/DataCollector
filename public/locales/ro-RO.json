@@ -1,30 +1,38 @@
 {
-	  "Title": "Offine DataCollector",
-	  "Add_Entry": "Adaugă Intrare",
-	  "Edit_Entry": "Editează Intrare",
-	  "Table": "Tabel",
-	   "Map": "Hartă",
+"Title": "Offine DataCollector",
+"Add_Entry": "Adaugă Intrare",
+"Edit_Entry": "Editează Intrare",
+"Table": "Tabel",
+"Map": "Hartă",
 
-		  "Save": "Salvează",
-		   "Delete": "Şterge",
-		   "ResetLocalDatabase": "Şterge baza de date",
-		   "SyncWithServer": "Sincronizează",	   
-		   "Log": "Jurnal",
-		   "Clear": "Goleşte",	
-		   "Metadata": "Formulare",
-		   "Users": "Utilizatori",
-		   "Collections": "Date",
-		    "Logout": "Deconectează-te",
+"Save": "Salvează",
+"Delete": "Şterge",
+"Close": "Închide",
+"ResetLocalDatabase": "Şterge baza de date",
+"SyncWithServer": "Sincronizează",	   
+"Log": "Jurnal",
+"Clear": "Goleşte",	
+"Metadata": "Formulare",
+"Users": "Utilizatori",
+"Collections": "Date",
+"Logout": "Deconectează-te",
+
+"EditForm": "Editează Formularul",
+
+"TextBox": "TextBox",
+"TextArea": "TextArea",
+"Radio": "Radio",
+"Checkbox": "Checkbox",
+"Select": "Select", 
+"EditComponent":"Editează Componenta",
 		    
-		    "EditForm": "Editează Formularul",
-		   
-   "Login": "Autentifică-te",
-   "Register": "Înregistrează-te",
-   "RememberMe": "Ţine minte",
-   "Email": "Email",
-   "Password": "Parola",
-   "ReadMoreAboutUs": "Află mai multe",	
+"Login": "Autentifică-te",
+"Register": "Înregistrează-te",
+"RememberMe": "Ţine minte",
+"Email": "Email",
+"Password": "Parola",
+"ReadMoreAboutUs": "Află mai multe",	
 
-	   
-	      "RequestAccount": "Solicită un cont"	
+   
+"RequestAccount": "Solicită un cont"	
 }

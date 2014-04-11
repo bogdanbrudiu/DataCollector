@@ -30,6 +30,7 @@ define(['backbone','underscore',
 			  }
     	  switch ( this.model.type.toLowerCase())
     		{
+    			case "textbox":
     			case "text":
     				this.control=new TextView({model: this.model, value: this.value});   
     			  break;
