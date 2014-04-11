@@ -25,7 +25,13 @@
 "Checkbox": "Checkbox",
 "Select": "Select", 
 "EditComponent":"Editează Componenta",
-		    
+		
+"ColumnId":"ID Coloana",
+"Label":"Eticheta",
+"Placeholder":"Exemplu intrare",
+"ShowInTable":"Arată in tabel",
+"Options":"Opţiuni (Separate cu virgulă)",
+
 "Login": "Autentifică-te",
 "Register": "Înregistrează-te",
 "RememberMe": "Ţine minte",

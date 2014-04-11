@@ -37,22 +37,35 @@ define([
     	  {
     		  id=id+'_'+index++;
     	  }
-    	  return {type:type ,id:id, label:id, placeholder: id, value:'', disabled: false};
+    	  return {type:type ,id:id, label:id, placeholder: id, value:'', editorAttrs:{disabled: false}, showInTable:true};
       },
       addTextBox:function(){
-    	  this.collection.add(this.addcomponent('textbox'));
+    	  this.selectedItem=myModel=this.addcomponent('textbox');
+    	  this.collection.add(myModel);
+    	  this.render();
       },
       addTextArea:function(){
-    	  this.collection.add(this.addcomponent('textarea'));
+    	  this.selectedItem=myModel=this.addcomponent('textbox');    	  
+    	  this.collection.add(myModel);
+    	  this.render();
       },
       addRadio:function(){
-    	  this.collection.add(this.addcomponent('radio'));
+    	  this.selectedItem=myModel=this.addcomponent('radio');
+    	  myModel.options=["Option1","Option2","Option3"]
+    	  this.collection.add(myModel);
+    	  this.render();
       },
       addCheckbox:function(){
-    	  this.collection.add(this.addcomponent('checkbox'));
+    	  this.selectedItem=myModel=this.addcomponent('checkbox');
+    	  myModel.options=["Option1","Option2","Option3"]
+    	  this.collection.add(myModel);
+    	  this.render();
       },
       addSelect:function(){
-    	  this.collection.add(this.addcomponent('select'));
+    	  this.selectedItem=myModel=this.addcomponent('select');
+    	  myModel.options=["Option1","Option2","Option3"]
+    	  this.collection.add(myModel);
+    	  this.render();
       },
       itemup: function(){
     	  if(this.selectedItem!=null){
@@ -73,12 +86,54 @@ define([
       itemdelete: function(){
     	  if(this.selectedItem!=null){
     		  this.collection.remove(this.collection.get(this.selectedItem));
-    		  //this.render();
+    		  this.render();
     	  }
       },
       itemedit: function(){
     	  if(this.selectedItem!=null){
+    		  this.selectedIndex= this.collection.indexOf(this.collection.get(this.selectedItem));
+    		  $('#controlId').val(this.selectedItem.id);
+    		  $('#controlLabel').val(this.selectedItem.label);
+    		  $('#controlPlaceholder').val(this.selectedItem.placeholder);
+    		  if(this.selectedItem.showInTable){
+    			  $('#controlShowInTable').attr('checked', true);
+
+    		  }else{
+    			  $('#controlShowInTable').attr('checked', false);
+    		  }
+    		  $('#controlOptions').val(this.selectedItem.options);
+    		  if(this.selectedItem.type.toLowerCase()=="radio" ||
+    	    			 this.selectedItem.type.toLowerCase()=="checkboxes"  ||
+    	    			 this.selectedItem.type.toLowerCase()=="checkbox" ||
+    	    			 this.selectedItem.type.toLowerCase()=="select"
+    	    			){
+    	    			  $('#controlOptions').show();
+    	    			  $('#controlOptionsLabel').show();
+    	    		  }else{
+    	    			  $('#controlOptions').hide();
+    	    			  $('#controlOptionsLabel').hide();
+    	    		  }
+    		  
     		 $('#itemeditmodal').modal('show');
+    	  }
+      },
+      saveitem: function(){
+    	  if(this.selectedIndex!=null){
+    		  
+    		  //this.selectedItem.id=$('#controlId').val();
+    		  //this.selectedItem.label=$('#controlLabel').val();
+    		  //this.selectedItem.placeholder=$('#controlPlaceholder').val();
+    		  //this.selectedItem.showInTable= $('#controlShowInTable').is(':checked');
+    		  //this.selectedItem.options=$('#controlOptions').val();
+    		 
+    		  this.collection.models[this.selectedIndex].set("id",$('#controlId').val());
+    		  this.collection.models[this.selectedIndex].set("label",$('#controlLabel').val());
+    		  this.collection.models[this.selectedIndex].set("placeholder",$('#controlPlaceholder').val());
+    		  this.collection.models[this.selectedIndex].set("showInTable",$('#controlShowInTable').is(':checked'));
+    		  this.collection.models[this.selectedIndex].set("options",$('#controlOptions').val());
+    		  this.selectedItem= this.collection.models[this.selectedIndex].attributes;
+    		 $('#itemeditmodal').modal('hide');
+    		 this.render();
     	  }
       },
       closeitem: function(){
@@ -96,9 +151,9 @@ define([
 		  this.value=this.model.value || options.value;
 		  this.disabled=this.model.editorAttrs && this.model.editorAttrs.disabled;
 		  
-		  this.collection.on("add", this.render, this);
-	      this.collection.on("remove", this.render, this);
-	      this.collection.on("change", this.render, this);
+		  //this.collection.on("add", this.render, this);
+	      //this.collection.on("remove", this.render, this);
+	      //this.collection.on("change", this.render, this);
 		  
 	      
 	   
@@ -188,11 +243,16 @@ define([
 			  this.value+="\""+id+"\":"+JSON.stringify(newentrymodel)+", ";
 			//}
 		}
+	
 	if(this.value.length>0){
 		this.value=this.value.substr(0,this.value.length-2);
      }
+	this.value="{"+this.value+"}";
       $(this.el).html(this.renderForm({id:this.id, label:this.label, placeholder: this.placeholder, value:this.value, disabled: this.disabled}));
-     
+  	if(this.model.value!=this.value){
+		this.model.value=this.value;
+		$(this.el).find('textarea').trigger('change');
+	}
       
       this.$content=$('#metadatacontent');
       this.$content.html("");
@@ -219,6 +279,7 @@ define([
 			    	  entry.type=entrymodel.get('type');
 			    	  entry.label=entrymodel.get('label') || entrymodel.id;
 			    	  entry.placeholder=entrymodel.get('placeholder') || entrymodel.id;
+			    	  entry.showInTable=entrymodel.get('showInTable') || false;
 			    	  entry.disabled=entrymodel.get('editorAttrs') && entrymodel.get('editorAttrs').disabled;
 			    	  entry.options=entrymodel.get('options') || [];
 			    	  

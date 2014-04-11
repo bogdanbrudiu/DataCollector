@@ -120,6 +120,8 @@ for(var entryKey in this.model.schema)
             }
             obj[id] = value;
             this.model.set(obj);
+            $("#navbar #save").on("click",this,this.save);
+            $("#navbar #delete").on("click",this,this.softDelete);
             return true;
         }
       

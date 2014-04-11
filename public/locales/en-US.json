@@ -26,6 +26,12 @@
 "Select": "Select", 
 "EditComponent":"Edit Component",   
    
+"ColumnId":"Column Id",
+"Label":"Label",
+"Placeholder":"Placeholder",
+"ShowInTable":"Show In Table",
+"Options":"Options (Comma separated)",
+
 "Login": "Login",
 "Register": "Register",
 "RememberMe": "Remember me",

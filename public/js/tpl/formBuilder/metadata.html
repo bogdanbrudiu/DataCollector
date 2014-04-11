@@ -66,7 +66,7 @@
 
 
    
-<textarea id="<%= id %>" placeholder="placeholder" class="form-control" rows="3"
+<textarea id="<%= id %>" placeholder="placeholder" class="form-control" rows="3" style="display:none;"
 <% if(disabled){ %>
 disabled="disabled"
 <% } %>
@@ -80,6 +80,23 @@ disabled="disabled"
         <h4 class="modal-title" id="myModalLabelEdit"><%= polyglot.t('EditComponent') %></h4>
       </div>
       <div class="modal-body center-block">
+     
+	<label for="controlId"><%= polyglot.t('ColumnId') %></label>
+    <input type="text" class="form-control" id="controlId" placeholder="<%= polyglot.t('ColumnId') %>" value="">
+     
+    <label for="controlLabel"><%= polyglot.t('Label') %></label>
+    <input type="text" class="form-control" id="controlLabel" placeholder="<%= polyglot.t('Label') %>" value="">
+     
+    <label for="controlPlaceholder"><%= polyglot.t('Placeholder') %></label>
+    <input type="text" class="form-control" id="controlPlaceholder" placeholder="<%= polyglot.t('Placeholder') %>" value="">
+
+    <label for="controlShowInTable"><%= polyglot.t('ShowInTable') %></label>
+    <input type="checkbox" class="form-control" id="controlShowInTable"  value="true">
+     
+       <label id="controlOptionsLabel" for="controlOptions"><%= polyglot.t('Options') %></label>
+       <textarea class="form-control" id="controlOptions" placeholder="<%= polyglot.t('Options') %>">
+       </textarea>
+   
      
       </div>
       <div class="modal-footer">
