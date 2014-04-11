@@ -283,10 +283,7 @@ section {
 <script>
 $(document).ready(function(){
   
-   var locale = localStorage.getItem('locale') || navigator.language || navigator.userLanguage || 'en-US';
-	if(locale!='en-US'){
-		window.location.pathname='index.'+locale+".html";
-	} 
+   var locale = 'en-US';
 	   
   
 $('.carousel').carousel({interval:false});
@@ -479,7 +476,7 @@ $('.panel-thumbnail>a').click(function(e){
   		<li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">Ro/En <b class="caret"></b></a>
           <ul class="dropdown-menu">
-              <li><a href="index.ro-RO.html">Ro</a></li>
+            <li><a href="index.ro-RO.html">Ro</a></li>
 		  <li><a href="index.en-US.html">En</a></li>
           </ul>
         </li>

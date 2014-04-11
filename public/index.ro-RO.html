@@ -283,11 +283,8 @@ section {
 <script>
 $(document).ready(function(){
   
-   var locale = localStorage.getItem('locale') || navigator.language || navigator.userLanguage || 'en-US';
-	if(locale!='en-US'){
-		window.location.pathname='index.'+locale+".html";
-	} 
-	   
+  
+ var locale = 'ro-RO';
   
 $('.carousel').carousel({interval:false});
 
@@ -465,21 +462,20 @@ $('.panel-thumbnail>a').click(function(e){
       </div>
       <div class="collapse navbar-collapse">
         <ul class="nav navbar-nav nav-justified">
-          <li><a href="#home">DataCollector</a></li>
-          <li><a href="#about">About</a></li>
+          <li><a href="#home">Data Collector</a></li>
+          <li><a href="#about">Despre noi</a></li>
           
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Usecases<b class="caret"></b></a>
+  <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Scenarii de folosire<b class="caret"></b></a>
           <ul class="dropdown-menu">
- 			<li><a href="#usecase1">Usecase1</a></li>
-		  	<li><a href="#usecase2">Usecase2</a></li>          
-		  </ul>
+           <li><a href="#usecase1">Usecase1</a></li>
+		  <li><a href="#usecase2">Usecase2</a></li>
+          </ul>
         </li>
-        
-  		<li class="dropdown">
+		    <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">Ro/En <b class="caret"></b></a>
           <ul class="dropdown-menu">
-              <li><a href="index.ro-RO.html">Ro</a></li>
+           <li><a href="index.ro-RO.html">Ro</a></li>
 		  <li><a href="index.en-US.html">En</a></li>
           </ul>
         </li>
@@ -491,7 +487,6 @@ $('.panel-thumbnail>a').click(function(e){
 <!-- Begin page content -->
  
   
- 
 <div class="container" id="about">
 <div class="divider"></div>
     <div class="page-header text-center">
@@ -503,49 +498,46 @@ $('.panel-thumbnail>a').click(function(e){
 
   <div class="col-sm-10 col-sm-offset-1">
     <div class="page-header text-center">
-      <h1>About us</h1>
+      <h1>Despre noi</h1>
     </div>
     
-    <p class="lead text-center"> 
-      Data collecting is a problem because it is usually done manually, using pen & paper, without any sort of validation, and it may get lost or is digitized very late with a lot of waste time.
-      <br/>
-      Our proposed solution is a mobile device app witch can work on low resource devices, that allows you to personalize your form, collect data both online and offline & collaborate in large teams.
-      <br/>
-      <br/>
-      We make data collecting  easy, with awesome user experience, safe & fiabile. It`s a time saver with near real time data collection, monitoring & control.
+    <p class="lead text-center">
+    Culegerea de date este o problemă pentru că de regulă este realizată manual cu pixul pe hîrtie, fară nici un fel de validare, şi dacă nu se pierd se prelucrează tărziu cu mult timp pierdut.
+    <br/>
+    Soluţia propusă de noi este o aplicaţie pentru echipamente mobile, care merge şi pe echipamente cu resurse limitate, care permite personalizarea formularului, colectarea cu sau fară conexiune la internet şi colaborarea cu membrii echipei.
+    <br/>
+    <br/>
+    Noi facem colectarea de date sa fie uşoară, o experientă excelentă pentru utilizatori, sigură şi fiabilă. Îţi economiseşte timpul cu o colectare de date aproape în timp real, control şi monitorizare.  
 	</p> 
       <hr>
      
-      <p><strong>PAIN</strong>
+      <p><strong>Problemă</strong>
         <ul>
-          <li>time spent with paper work and centralization of data</li>
-          <li>possibility to introduce incorrect data</li>
-          <li>human resource needed for centralization of data</li>
-          <li>delay access to information</li>
+          <li>timp pierdut cu prelucrarea şi centralizarea datelor</li>
+          <li>posibilitatea de a introduce date incorecte</li>
+          <li>resurse umane necesare pentru centralizarea datelor</li>
+          <li>accesul tarziu la informaţii</li>
         </ul>
 
 	  </p> 
-   <p><strong>GAIN</strong>
+   <p><strong>Căştig</strong>
 <ul>
-  <li>improve productivity</li>
-  <li>efficient application easy to use</li>
-  <li>reduce costs with human resource & paper economy</li>
-  <li>in time data access</li>
-  <li>offline data entry and synchronization when online</li>
+  <li>creşte productivitatea</li>
+  <li>aplicaţie eficientă şi uşor de folosit</li>
+  <li>reduce costurile cu resursele umane şi economiseşte hartie</li>
+  <li>accesarea datelor în timp util</li>
+  <li>colectare de date fără conectivitate internet şi apoi posibilitatea de a face sincronizarea datelor</li>
 </ul>
 
       </p> 
-    
-    <hr>
-    
+ 
     <div class="divider"></div>
     
   </div>
 </div>
     
-    
 
-  
+    
 <div class="divider" id="usecase1"></div>
    
 <div class="container" style="background-color: #e6e6e6;">
@@ -603,7 +595,7 @@ $('.panel-thumbnail>a').click(function(e){
   <div class="modal-dialog">
   <div class="modal-content">
 	<div class="modal-header">
-		<button class="close" type="button" data-dismiss="modal">�</button>
+		<button class="close" type="button" data-dismiss="modal">×</button>
 		<h3 class="modal-title"></h3>
 	</div>
 	<div class="modal-body">

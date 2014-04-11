@@ -36,13 +36,14 @@ define([ 'jquery', 'backbone', 'polyglot', 'app/views/app', 'app/views/header', 
     				password: this.loginState.get('login').password
     			}),
 			success: function (data) {
-				Backbone.history.stop();
+			
 				clearInterval(this.refreshIntervalId);
 				localStorage.removeItem('email');
 				localStorage.removeItem('password');
             			this.loginState.set('loginStatus', false);
          			this.loginState.set('login', null);
          			 this.navigate('login', {trigger: true});
+         			Backbone.history.stop();
 			}
 		});
 
