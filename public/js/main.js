@@ -40,7 +40,7 @@ require.config({
 
 
 
-require([ 'jquery', 'bootstrap', 'backbone',  'app/app', 'app/models/models'], function ($, Bootstrap, Backbone, AppRouter, models) {
+require([ 'jquery', 'bootstrap', 'backbone',  'app/app', 'app/models/models', 'backbone.analytics'], function ($, Bootstrap, Backbone, AppRouter, models, analytics) {
 
 	
 	

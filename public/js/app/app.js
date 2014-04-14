@@ -1,5 +1,9 @@
-define([ 'jquery', 'backbone', 'polyglot', 'app/views/app', 'app/views/header', 'app/views/map', 'app/views/table', 'app/views/entry', 'app/views/log', 'app/views/login', 'app/views/register', 'app/models/models', 'backbone.basicauth'],
-		function ($, Backbone, Polyglot, AppView, HeaderView, MapView, TableView, EntryView, LogView, LoginView, RegisterView, Models, Basicauth ) {
+define([ 'jquery', 'backbone', 'polyglot', 'app/views/app', 'app/views/header', 
+         //'app/views/map', 
+         'app/views/table', 'app/views/entry', 'app/views/log', 'app/views/login', 'app/views/register', 'app/models/models', 'backbone.basicauth'],
+		function ($, Backbone, Polyglot, AppView, HeaderView,
+				//MapView, 
+				TableView, EntryView, LogView, LoginView, RegisterView, Models, Basicauth ) {
 
 
 
@@ -9,7 +13,7 @@ define([ 'jquery', 'backbone', 'polyglot', 'app/views/app', 'app/views/header', 
   //              "entries/reset"                     : "reset",
                 "entries/sync"                      : "sync",
     
-                "metadata/:collection/map"        : "map",
+//                "metadata/:collection/map"        : "map",
                 "metadata/:collection/table"        : "table",
                 "metadata/:collection/add"          : "addEntry",
                 "metadata/:collection/:id"          : "editEntry",
@@ -100,7 +104,7 @@ define([ 'jquery', 'backbone', 'polyglot', 'app/views/app', 'app/views/header', 
                         $('.container .nav li').removeClass('active');
                         $('#addEntrymenu>a').html('<span class="glyphicon glyphicon-plus"></span> '+polyglot.t('Add_Entry'));
                         $('#tablemenu').addClass('active');
-                        $('#maprow').hide();
+                     //   $('#maprow').hide();
                         $('#tablerow').show();
                         $('#entryrow').hide();
                         App.addEntry(id, true);
@@ -130,7 +134,7 @@ define([ 'jquery', 'backbone', 'polyglot', 'app/views/app', 'app/views/header', 
                 $('.container .nav li').removeClass('active');
                 $('#addEntrymenu>a').html('<span class="glyphicon glyphicon-pencil"></span> '+polyglot.t('Edit_Entry'));
                 $('#addEntrymenu').addClass('active');
-                $('#maprow').hide();
+             //   $('#maprow').hide();
                 $('#tablerow').hide();
                 $('#entryrow').show();
                 $("#navbar #save").show();
@@ -152,7 +156,7 @@ define([ 'jquery', 'backbone', 'polyglot', 'app/views/app', 'app/views/header', 
                 $('.container .nav li').removeClass('active');
                 $('#addEntrymenu>a').html('<span class="glyphicon glyphicon-plus"></span> '+polyglot.t('Add_Entry'));
                 $('#addEntrymenu').addClass('active');
-                $('#maprow').hide();
+              //  $('#maprow').hide();
                 $('#tablerow').hide();
                 $('#entryrow').show();
                 
@@ -166,7 +170,7 @@ define([ 'jquery', 'backbone', 'polyglot', 'app/views/app', 'app/views/header', 
             $('.container .nav li').removeClass('active');
             $('#addEntrymenu>a').html('<span class="glyphicon glyphicon-plus"></span> '+polyglot.t('Add_Entry'));
             $('#tablemenu').addClass('active');
-            $('#maprow').hide();
+          //  $('#maprow').hide();
             $('#tablerow').show();
             $('#entryrow').hide();
             
@@ -174,7 +178,7 @@ define([ 'jquery', 'backbone', 'polyglot', 'app/views/app', 'app/views/header', 
             $("#navbar #delete").hide();
 
         },
-        map: function (collection) {
+/*        map: function (collection) {
             collection = collection ? collection : "metadata";
             this.changeEntity(collection);
             $('.container .nav li').removeClass('active');
@@ -187,6 +191,7 @@ define([ 'jquery', 'backbone', 'polyglot', 'app/views/app', 'app/views/header', 
             $("#navbar .save").hide();
             $("#navbar .delete").hide();
         },
+        */
      
  //       reset: function(){
  //           localStorage.clear();
@@ -212,7 +217,7 @@ define([ 'jquery', 'backbone', 'polyglot', 'app/views/app', 'app/views/header', 
                         App.Views.appView = new AppView({ currentCollection: "metadata", el: '#app', App: App });
                         App.Views.tableView = new TableView({ model: App.Collections.Entries, el: "#table", App: App });
                         App.Views.headerView = new HeaderView({ model: App.Collections.Entries, loginState: App.loginState, el: '.header', App: App });
-                        App.Views.mapView = new MapView({ model: App.Collections.Entries, el: "#map", App: App });
+                    //    App.Views.mapView = new MapView({ model: App.Collections.Entries, el: "#map", App: App });
                         
                         //App.changeEntity(App.Collections.Entries.length>0?App.Collections.Entries.models[0].get('_id'):"metadata");
 

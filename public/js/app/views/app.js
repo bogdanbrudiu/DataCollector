@@ -27,12 +27,12 @@ define(function (require) {
         render: function () {
             //$(this.el).html(this.template());
         	
-        	$(this.el).find('#btnMap').attr("href", '#metadata/' + this.currentCollection + '/map');
-        	if(this.App.currentEntityCollection && this.App.currentEntityCollection.getSchema().lat && this.App.currentEntityCollection.getSchema().lng){
-        		$(this.el).find('#btnMap').show();
-        	}else{
-        		$(this.el).find('#btnMap').hide();
-        	}
+        	//$(this.el).find('#btnMap').attr("href", '#metadata/' + this.currentCollection + '/map');
+        	//if(this.App.currentEntityCollection && this.App.currentEntityCollection.getSchema().lat && this.App.currentEntityCollection.getSchema().lng){
+        	//	$(this.el).find('#btnMap').show();
+        	//}else{
+        	//	$(this.el).find('#btnMap').hide();
+        	//}
             $(this.el).find('#btnTable').attr("href", '#metadata/' + this.currentCollection + '/table');
             $(this.el).find('#btnAdd').attr("href", '#metadata/' + this.currentCollection + '/add');
             return this;
