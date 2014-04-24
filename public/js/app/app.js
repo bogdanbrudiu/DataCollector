@@ -100,7 +100,7 @@ define([ 'jquery', 'backbone', 'polyglot', 'app/views/app', 'app/views/header',
                     success: function (model, resp, options) {
                         var App=options.App;
                         App.Views.tableView.changeModel(currentEntityCollection);
-                        App.Views.mapView.changeModel(currentEntityCollection);
+                        //App.Views.mapView.changeModel(currentEntityCollection);
                         $('.container .nav li').removeClass('active');
                         $('#addEntrymenu>a').html('<span class="glyphicon glyphicon-plus"></span> '+polyglot.t('Add_Entry'));
                         $('#tablemenu').addClass('active');

@@ -7,7 +7,7 @@
     factory(window.Backbone);
   }
 })(function(Backbone) {
-	/*
+	
   var loadUrl = Backbone.History.prototype.loadUrl;
 
   Backbone.History.prototype.loadUrl = function(fragmentOverride) {
@@ -16,10 +16,10 @@
     if (!/^\//.test(gaFragment)) gaFragment = '/' + gaFragment;
     if(typeof window._gaq !== "undefined") window._gaq.push(['_trackPageview', gaFragment]);
     if(typeof window['GoogleAnalyticsObject'] !== "undefined"){
-      var ga = window['GoogleAnalyticsObject'];
+      var ga = window[window['GoogleAnalyticsObject']];
       ga('send', 'pageview', gaFragment);
     }
     return matched;
   };
-*/
+
 });
